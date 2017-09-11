@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import cv2
 from ALGORYTMY.peron import peron
 from ALGORYTMY.zajezdnia import zajezdnia
@@ -9,17 +9,11 @@ from ALGORYTMY.przeszkody import  przeszkody
 from ALGORYTMY.banan import banan
 from ALGORYTMY.train import pociag
 
-import numpy as np
-import time
-import requests
-import threading
-from threading import Thread, Event, ThreadError
-from cv2 import __version__
 
 
+###################wartosci poczatkowe do kalibratora (zajezdnia i peron)###################
 zajezdnia_lower_value = (0,0,240)
 zajezdnia_upper_value = (50,255,255)
-
 Lower = (0, 120, 0)
 Upper = (3, 255, 255)
 
@@ -28,51 +22,55 @@ Upper = (3, 255, 255)
 def przetwarzajfilm(sciezka,zajezdniaPrzetwarzaj, peronPrzetwarzaj,przeszkodyPtrzewarzaj,
                       rekaPrzetwarzaj, twarzPrzetwarzaj, ruchPrzetwarzaj,
                       bananPrzetwarzaj,czerwonyPrzetwarzaj):
+
     camera = cv2.VideoCapture(sciezka)
-    # inicjalizacja flag
+
+    ################### wykrywanie reki ###################
     zatrzask=0
     track_window = 0
     term_crit = 0
     roi_hist = 0
-    licznik_ruch = 0
     if rekaPrzetwarzaj:
         track_window, term_crit, roi_hist = initReka()
 
+    ################### wykrywanie ruchu ###################
+    licznik_ruch = 0
+    fgbg = cv2.createBackgroundSubtractorMOG2()
+
+    ################### wykrywanie przeszkod ###################
     counter_proste = 0
     counter_widac_tory = 0
-    licznik_ruch =0
-    fgbg = cv2.createBackgroundSubtractorMOG2()
+    ##################################
+    # 1.wykrywanie ruchu             #
+    # 2.wykrywanie zajezdni          #
+    # 3.wykrywanie peronu            #
+    # 4.wykrywanie przeszkod         #
+    # 5.wykrywanie reki              #
+    # 6.wykrzwanie twarzy            #
+    # 7.wykrywanie banana            #
+    # 8.wykrywanie czerwonego pociagu#
+    ##################################
     while (camera.isOpened()):
         ret, frame = camera.read()
 
         if ruchPrzetwarzaj:
             licznik_ruch = ruchomy(frame, licznik_ruch, fgbg)
-
-
         if zajezdniaPrzetwarzaj:
             zajezdnia(frame, zajezdnia_lower_value, zajezdnia_upper_value)
         if peronPrzetwarzaj:
             zatrzask = peron(frame, Lower, Upper, zatrzask)
-
         if przeszkodyPtrzewarzaj:
             counter_proste, counter_widac_tory = przeszkody(frame, counter_proste, counter_widac_tory)
-
         if rekaPrzetwarzaj:
             track_window, term_crit, roi_hist = reka(frame, track_window, term_crit, roi_hist)
-
-
         if twarzPrzetwarzaj:
             twarz(frame)
-
         if bananPrzetwarzaj:
             banan(frame)
-
         if czerwonyPrzetwarzaj:
             pociag(frame)
 
-        # wlasne przetwarzanie
-
-
+        # zamykanie okna filmu na 'q'
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         cv2.imshow('frame', frame)
@@ -82,11 +80,12 @@ def przetwarzajfilm(sciezka,zajezdniaPrzetwarzaj, peronPrzetwarzaj,przeszkodyPtr
 
 
 
-
+# funkcja Adama
 def initReka():
     r, a, c, b = 100, 200, 100, 150
     track_window = (r, a, c, b)
     x, y, w, h, = 100, 100, 400, 400
+    #!
     frames = cv2.imread('C:/Users/DELL/Desktop/PKM2-RELEASE_1.5(1)/PKM2-RELEASE_1.5/PKM2/INNE/ramka.jpg')
     obrazDloni = frames[y:y + h, x:x + w]
     # Dobor odpowiedniej maski filtrujaca nasza dlon z niepotrzebnych elementow
