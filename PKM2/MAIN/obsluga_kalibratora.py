@@ -1,12 +1,10 @@
-
-
-
 import cv2
 import numpy as np
 import requests
 
 peronWys=False
 zajezdniaWys=True
+
 def nothing(x):
     pass
 
@@ -120,6 +118,7 @@ def przetwarzanie(frame,peronWys,zajezdniaWys):
         cv2.putText(frame, "P", (630, 480), cv2.FONT_HERSHEY_COMPLEX_SMALL, .9, (255, 0, 100))
     elif zajezdniaWys:
         cv2.putText(frame, "Z", (630, 480), cv2.FONT_HERSHEY_COMPLEX_SMALL, .9, (255, 0, 100))
+     #zapis do pliku
     if(cv2.getTrackbarPos('Zapis', 'image')==1):
         if peronWys:
             plik = open('peronHSV.txt', 'w')
@@ -149,7 +148,7 @@ def przetwarzanie(frame,peronWys,zajezdniaWys):
             plik.writelines("\n")
             plik.writelines(str(upper_value[2]))
             plik.close()
-
+    #ustawienia okna(wielkosc oraz miejsce pojawienia sie)
     cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
     cv2.moveWindow('frame',650,200)
     cv2.namedWindow('black')
@@ -182,7 +181,7 @@ track_window = 0
 term_crit = 0
 roi_hist = 0
 
-
+#obsluga streamu
 while True:
         bytes += stream.raw.read(1024)
         a = bytes.find(b'\xff\xd8')
