@@ -1,6 +1,4 @@
-
 import sys
-import cv2
 from MAIN.obsluga_nagrania import przetwarzajfilm
 from MAIN.obsługa_streamu import przetwarzajSTREAM
 
@@ -18,9 +16,8 @@ filmOrCam=1
 sciezka=''
 
 
-
-
-
+#Wybor filmu albo streamu
+#Wybor odpowiednich algorytmow przy uruchomieniu programu
 if __name__ == "__main__":
     for i in range(1, len(sys.argv)):
         if sys.argv[i].find("1") != -1:
