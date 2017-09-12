@@ -6,28 +6,24 @@ import cv2
 import numpy as np
 import os
 
-#Zdecydowac ktora opcje tel wybieramy
 tel = {'peron':False,'zajezdnia':False,'reka':False,'przeszkody':False,"czerwony":False,'twarz':False, 'ruch':False, 'banan':False}
 
-#A to gdzie ? 
-#os.system("python skryptRozdzielajacy.py "+str(filmOrCam)+ " czysty.avi "+str(tel))
-
 class Okno(QMainWindow):
+    
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = loadUi('PKM_GUI.ui',self)
         self.ui.button_stream_start.clicked.connect(self.stream_start)
         self.ui.button_nagranie_start.clicked.connect(self.nagranie_start)
-        self.ui.button_kalibruj.clicked.connect(self.kalibruj_start)
-      
+        self.ui.button_kalibruj.clicked.connect(self.kalibruj_start) 
     
     def kalibruj_start(self):
         os.system("python obsluga_kalibratora.py ")
 
-    def stream_start(self):
-        
+    def stream_start(self):      
         filmOrCam = 2      
         print("\nStart detekcji na strumieniu: \n")
+        
         if self.ui.detekcja_zajezdnia_checkBox.isChecked():
             tel['zajezdnia'] = True
             print("Detekcja zajezdni aktywna")
@@ -79,9 +75,9 @@ class Okno(QMainWindow):
         os.system("python skryptRozdzielajacy.py " + str(3) + " czysty.avi " + str(tel))
                               
     def nagranie_start(self):
-        
         filmOrCam = 1      
         print("\nStart detekcji na nagraniu: \n")
+        
         if self.ui.detekcja_zajezdnia_checkBox.isChecked():
             tel['zajezdnia'] = True
             print("Detekcja zajezdni aktywna")
