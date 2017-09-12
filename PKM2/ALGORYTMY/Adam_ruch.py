@@ -2,10 +2,15 @@ import numpy as np
 import cv2
 
 def ruchomy(frame,licznik,fgbg):
+    """
+
+    :param frame:array, pojedyncza ramka RGB ze video
+    :param licznik:int, treshold ktory odpowiada za wyzwalanie z opoznieniem wykrywania ruchu pociagu
+    :param fgbg:BackgroundSubtractorMOG2, Obiekt do porownnywania ramek
+    :return:licznik, int
+    """
     height, width = frame.shape[:2]
     prev_frame = np.zeros([130, width])
-
-
     history = 4
 
     obraz = frame[350:height]
@@ -18,11 +23,11 @@ def ruchomy(frame,licznik,fgbg):
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     if(uklad < 40000):
-     licznik-=1
+        licznik -= 1
     elif (uklad > 40000):
-     licznik =6
+        licznik = 6
 
-    if(licznik <=0):
+    if(licznik <= 0):
         cv2.putText(frame, 'stoi', (100, 100), font, 3, (255, 255, 255), 2)
 
     if(licznik > 0):
