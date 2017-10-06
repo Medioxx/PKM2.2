@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>332</width>
-    <height>517</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -172,42 +172,6 @@
     </property>
     <property name="text">
      <string>START</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_kalibruj">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>440</y>
-      <width>90</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>KALIBRUJ</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>400</y>
-      <width>211</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>KALIBRACJA</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="detekcja_twarz_checkBox">
