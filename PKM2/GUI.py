@@ -61,12 +61,6 @@ class Okno(QMainWindow):
         else:
             tel['ruch'] = False
 
-        if self.ui.detekcja_czerwony_pociag_checkBox.isChecked():
-            tel['czerwony'] = True
-            print("Detekcja czerwonego pociągu aktywna")
-        else:
-            tel['czerwony'] = False
-
         if self.ui.detekcja_banan_checkBox.isChecked():
             tel['banan'] = True
             print("Detekcja banana aktywna")
@@ -102,10 +96,6 @@ class Okno(QMainWindow):
         if self.ui.detekcja_ruch_checkBox.isChecked():
             tel['ruch'] = True
             print("Detekcja ruchu pociagu aktywna")
-
-        if self.ui.detekcja_czerwony_pociag_checkBox.isChecked():
-            tel['czerwony'] = True
-            print("Detekcja czerwonego pociągu aktywna")
 
         if self.ui.detekcja_banan_checkBox.isChecked():
             tel['banan'] = True

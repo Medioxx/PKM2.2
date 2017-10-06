@@ -1,6 +1,6 @@
 import sys
-from MAIN.obsluga_nagrania import przetwarzajfilm
-from MAIN.obsługa_streamu import przetwarzajSTREAM
+from obsluga_nagrania import przetwarzajfilm
+from obsługa_streamu import przetwarzajSTREAM
 
 
 peronPrzetwarzaj=False
