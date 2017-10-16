@@ -5,6 +5,8 @@ import sys
 import cv2
 import numpy as np
 import os
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 tel = {'peron': False, 'zajezdnia': False, 'reka': False, 'przeszkody': False, "czerwony": False, 'twarz': False,
        'ruch': False, 'banan': False}
@@ -70,6 +72,9 @@ class Okno(QMainWindow):
         os.system("python skryptRozdzielajacy.py " + str(3) + " czysty.avi " + str(tel))
 
     def nagranie_start(self):
+        #self.wczytaj_plik()
+        text = self.ui.nagranie_lineEdit.text()
+        text2 = " " + text + " "
         filmOrCam = 1
         print("\nStart detekcji na nagraniu: \n")
 
@@ -101,8 +106,12 @@ class Okno(QMainWindow):
             tel['banan'] = True
             print("Detekcja banana aktywna")
 
-        os.system("python skryptRozdzielajacy.py " + str(filmOrCam) + " czysty.avi " + str(tel))
+        os.system("python skryptRozdzielajacy.py " + str(filmOrCam) + text2 + str(tel))
         print(tel)
+
+    def wczytaj_plik(self):
+        filename = QFileDialog.getOpenFileName(self, 'Open File', 'c:\\', "Video files (*.avi)")
+        print(filename)
 
 
 if __name__ == '__main__':
