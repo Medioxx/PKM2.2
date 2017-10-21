@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/PKM.iml" filepath="$PROJECT_DIR$/PKM.iml" />
       <module fileurl="file://$PROJECT_DIR$/ImprovedPKMApplication.iml" filepath="$PROJECT_DIR$/ImprovedPKMApplication.iml" />
       <module fileurl="file://$PROJECT_DIR$/MOBILE_APP.iml" filepath="$PROJECT_DIR$/MOBILE_APP.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />

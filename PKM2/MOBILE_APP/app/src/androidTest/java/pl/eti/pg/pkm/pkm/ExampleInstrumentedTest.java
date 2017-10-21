@@ -1,4 +1,4 @@
-        package pl.eti.pg.pkm.pkm;
+package pl.eti.pg.pkm.pkm;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("pl.eti.pg.pkm.improvedpkmapplication", appContext.getPackageName());
+        assertEquals("pl.eti.pg.pkm.pkm", appContext.getPackageName());
     }
 }
