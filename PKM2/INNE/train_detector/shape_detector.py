@@ -2,14 +2,21 @@ import cv2
 from wrappers import ImageWrapper, ContourWrapper
 import graphics_utils
 import numpy as np
+<<<<<<< HEAD
 import imutils
+=======
+>>>>>>> ea1d704... inital algorithm
 
 square_str = "square"
 triangle_str = "triangle"
 
 
 class Shape:
+<<<<<<< HEAD
     def __init__(self, type="", color="", area=0, center_x=0, center_y=0, x=0, y=0, w=0, h=0):
+=======
+    def __init__(self, type="", color="", area=0, center_x=0, center_y=0, (x, y, w, h)=(0, 0, 0, 0)):
+>>>>>>> ea1d704... inital algorithm
         self.type = type
         self.color = color
         self.area = area
@@ -41,7 +48,11 @@ class Shape:
             self.type = "unknown"
         pass
 
+<<<<<<< HEAD
     def set_size(self, x, y, w, h):
+=======
+    def set_size(self, (x, y, w, h)):
+>>>>>>> ea1d704... inital algorithm
         (self.x, self.y, self.w, self.h) = (x, y, w, h)
         pass
 
@@ -73,9 +84,12 @@ class Shape:
     def is_area_higer_than(self, value):
         return self.area >= value
 
+<<<<<<< HEAD
     def is_area_lower_than(self, value):
         return self.area <= value
 
+=======
+>>>>>>> ea1d704... inital algorithm
     def __str__(self):
         str = "Type: %s, color: %s, area: %d, center(x,y): %d, %d, size(x,y,w,h): %d, %d, %d, %d" % (self.type, self.color, self.area, self.centerX, self.centerY, self.x, self.y, self.w, self.h)
         return str
@@ -91,6 +105,7 @@ class ShapeDetector:
 
     def run(self):
         self.detected = False
+<<<<<<< HEAD
         array_of_contours = []
         #Next, Previous, First_Child, Parent]
         for c in self.IW.contours_shape():
@@ -177,6 +192,67 @@ class ShapeDetector:
         if abs(cw_1.cX - cw_2.cX) <= err:
             if abs(cw_1.cY - cw_2.cY) <= err:
                 return True
+=======
+
+        for c in self.IW.contours_shape():
+            CW = ContourWrapper(c)
+            if self.is_similiar_to_previous_shape(CW):
+                continue
+            self.shape.set_type(len(CW.approx))
+            self.shape.area = CW.area
+            if self.shape.is_square():
+                if self.shape.is_area_higer_than(1000):
+                    self.shape.set_color(CW.get_color(self.IW.lab))
+                    #if self.shape.is_blue():
+                    self.detected = True
+                    self.shape.set_center(CW.cX, CW.cY)
+                    self.shape.set_size((CW.x, CW.y, CW.w, CW.h))
+
+                    print self.shape
+                    print CW.CL.mean
+                    self.check_possible_shapes()
+
+                    graphics_utils.draw_contour(self.IW.output_image, CW.approx)
+                    graphics_utils.draw_crosshair(self.IW.output_image, self.shape)
+
+
+
+        graphics_utils.draw_status(self.IW.output_image, self.shape, self.detected)
+
+        pass
+
+    def check_possible_shapes(self):
+        crop_img = self.IW.image[self.shape.y:(self.shape.y + self.shape.h), self.shape.x:(self.shape.x + self.shape.w)]
+        temp_IW = ImageWrapper(crop_img)
+
+        mean = cv2.mean(temp_IW.image)[:3]
+        print mean
+        # if self.temp_is_red(mean):
+        #     cv2.imshow('frame1', temp_IW.output_image)
+        #     cv2.imshow('frame2', temp_IW.lab)
+        #     cv2.imshow('frameedged2', temp_IW.edged)
+        #     graphics_utils.draw_contour(temp_IW.output_image, CW.approx)
+        #     cv2.waitKey(0)
+
+        # for c in temp_IW.contours_shape():
+        #     CW = ContourWrapper(c)
+        #     self.shape.set_type(len(CW.approx))
+        #     self.shape.area = CW.area
+        #     graphics_utils.draw_contour(temp_IW.output_image, CW.approx)
+        #
+        pass
+
+    def is_similiar_to_previous_shape(self, contour_wrapper):
+        checks = []
+        if abs(self.shape.area - contour_wrapper.area) < 50:
+            checks.append(True)
+        if abs(self.shape.x - contour_wrapper.x) < 20 and abs(self.shape.w - contour_wrapper.w) < 20:
+            checks.append(True)
+        if abs(self.shape.y - contour_wrapper.y) < 20 and abs(self.shape.y - contour_wrapper.y) < 20:
+            checks.append(True)
+        if checks.count(True) >= 2:
+            return True
+>>>>>>> ea1d704... inital algorithm
         return False
 
     def temp_is_red(self, mean):
