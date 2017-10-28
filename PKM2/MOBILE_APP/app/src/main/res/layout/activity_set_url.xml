@@ -10,7 +10,7 @@
     android:gravity="center">
 
     <EditText
-        android:id="@+id/title"
+        android:id="@+id/adress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/url"
@@ -22,7 +22,7 @@
         android:singleLine="true" />
 
     <EditText
-        android:id="@+id/describe"
+        android:id="@+id/port"
         android:layout_width="match_parent"
         android:layout_margin="16dp"
         android:padding="8dp"
@@ -36,7 +36,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/wykonano"
+        android:id="@+id/set_settings"
         android:text="@string/set_url"
         android:gravity="center"
         android:layout_margin="10dp"

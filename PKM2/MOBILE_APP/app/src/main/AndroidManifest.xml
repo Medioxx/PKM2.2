@@ -28,6 +28,9 @@
             android:name="pl.eti.pg.pkm.pkm.drawers.ControlDrawer"
             android:label="@string/title_control"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".SetURLActivity_"></activity>
+
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

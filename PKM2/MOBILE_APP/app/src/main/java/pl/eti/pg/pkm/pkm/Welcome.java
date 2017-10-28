@@ -22,7 +22,8 @@ public class Welcome extends AppCompatActivity {
         Animation myAnimation = AnimationUtils.loadAnimation(this, R.anim.mytransition);
         textView.startAnimation(myAnimation);
         imageView.startAnimation(myAnimation);
-        final Intent intent = new Intent(this, MainActivity.class);
+        final Intent intent = new Intent(this, SetURLActivity_.class);
+        SetURLActivity_.intent(this).start();
         Thread timer = new Thread(){
             public void run() {
                 try {

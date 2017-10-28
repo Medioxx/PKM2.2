@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        displayListView();
+//        displayListView();
 
         videoView = (VideoView)findViewById(R.id.videoView);
         btnPlayPause = (ImageButton) findViewById(R.id.btn_play_pause);
