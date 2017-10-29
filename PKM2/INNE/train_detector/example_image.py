@@ -1,10 +1,9 @@
 from shape_detector import ShapeDetector
+from hsv_detection import HSV_Detector
 import cv2
-import copy
-
 
 def image():
-    frame = cv2.imread("../shapes/foto3.jpg")
+    frame = cv2.imread("../shapes/foto1.jpg")
     shape = ShapeDetector(frame)
     cv2.imshow('imuout', shape.IW.output_image)
     cv2.imshow('imedged', shape.IW.edged)
@@ -14,8 +13,6 @@ def image():
 
 def video():
     cap = cv2.VideoCapture('../shapes/video3.mp4')
-    frame_width = cap.get(3)
-    frame_height = cap.get(4)
     while cap.isOpened():
         ret, frame = cap.read()
 
@@ -23,7 +20,6 @@ def video():
             break
 
         shape = ShapeDetector(frame)
-        #cv2.imshow('framIN', shape.IW.image)
         cv2.imshow('frameOUT', shape.IW.output_image)
         cv2.imshow('frameedged', shape.IW.edged)
         print "frame" + str(cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES))
@@ -39,8 +35,12 @@ def web_cam():
     while True:
         ret, frame = cam.read()
         shape = ShapeDetector(frame)
+        #shape = HSV_Detector(frame)
+        #cv2.imshow('mask', shape.return_mask())
+
         cv2.imshow('original webcam', shape.IW.image)
         cv2.imshow('processed image', shape.IW.output_image)
+        cv2.imshow('frameedged', shape.IW.edged)
         if cv2.waitKey(1) == 27:  #esc
             break
     cv2.destroyAllWindows()

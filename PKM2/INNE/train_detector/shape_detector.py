@@ -2,6 +2,7 @@ import cv2
 from wrappers import ImageWrapper, ContourWrapper
 import graphics_utils
 import numpy as np
+import imutils
 
 square_str = "square"
 triangle_str = "triangle"
@@ -87,15 +88,17 @@ class ShapeDetector:
 
     def run(self):
         self.detected = False
-
+        array_of_contours = []
+        #Next, Previous, First_Child, Parent]
         for c in self.IW.contours_shape():
+
             CW = ContourWrapper(c)
-            if self.is_similiar_to_previous_shape(CW):
-                continue
             self.shape.set_type(len(CW.approx))
             self.shape.area = CW.area
             if self.shape.is_square():
                 if self.shape.is_area_higer_than(1000):
+                    #array_of_contours.append(CW)
+                    array_of_contours = self.add_cw_to_similarity_array(array_of_contours, CW)
                     self.shape.set_color(CW.get_color(self.IW.lab))
                     #if self.shape.is_blue():
                     self.detected = True
@@ -104,47 +107,56 @@ class ShapeDetector:
 
                     print self.shape
                     print CW.CL.mean
-                    self.check_possible_shapes()
-
-                    graphics_utils.draw_contour(self.IW.output_image, CW.approx)
-                    graphics_utils.draw_crosshair(self.IW.output_image, self.shape)
 
 
+                    #graphics_utils.draw_contour(self.IW.output_image, CW.approx)
 
+        for cont in array_of_contours:
+            print str(cont.cX) + ", " + str(cont.cX) + ", " + str(cont.area)
+
+        #if len(array_of_contours) == 2:
+            #print array_of_contours[0].area / array_of_contours[1].area
+        if len(array_of_contours) >= 2:
+            a, b = self.check_cws_array_ratios(array_of_contours)
+            if a is None and b is None:
+                pass
+            else:
+                print "podejrzane kontury: " + str(a.area) + ", " + str(b.area)
+                print "cX_1: " + str(a.cX) + ", cY_1: " + str(a.cY)
+                print "cX_2: " + str(b.cX) + ", cY_2: " + str(b.cY)
+                self.shape.set_center(b.cX, b.cY)
+                self.shape.set_size((b.x, b.y, b.w, b.h))
+                graphics_utils.draw_contour(self.IW.output_image, a.approx)
+                graphics_utils.draw_contour(self.IW.output_image, b.approx)
+                graphics_utils.draw_crosshair(self.IW.output_image, self.shape)
         graphics_utils.draw_status(self.IW.output_image, self.shape, self.detected)
-
         pass
 
-    def check_possible_shapes(self):
-        crop_img = self.IW.image[self.shape.y:(self.shape.y + self.shape.h), self.shape.x:(self.shape.x + self.shape.w)]
-        temp_IW = ImageWrapper(crop_img)
 
-        mean = cv2.mean(temp_IW.image)[:3]
-        print mean
-        # if self.temp_is_red(mean):
-        #     cv2.imshow('frame1', temp_IW.output_image)
-        #     cv2.imshow('frame2', temp_IW.lab)
-        #     cv2.imshow('frameedged2', temp_IW.edged)
-        #     graphics_utils.draw_contour(temp_IW.output_image, CW.approx)
-        #     cv2.waitKey(0)
+    def add_cw_to_similarity_array(self, cnts_array, CW):
+        for cnt in cnts_array:
+            if cnt.cX == CW.cX and cnt.cY == CW.cY:
+                if 0.95 <= (cnt.area/CW.area) <= 1.05:
+                    return cnts_array
+        cnts_array.append(CW)
+        return cnts_array
 
-        # for c in temp_IW.contours_shape():
-        #     CW = ContourWrapper(c)
-        #     self.shape.set_type(len(CW.approx))
-        #     self.shape.area = CW.area
-        #     graphics_utils.draw_contour(temp_IW.output_image, CW.approx)
-        #
-        pass
-
-    def is_similiar_to_previous_shape(self, contour_wrapper):
-        checks = []
-        if abs(self.shape.area - contour_wrapper.area) < 50:
-            checks.append(True)
-        if abs(self.shape.x - contour_wrapper.x) < 20 and abs(self.shape.w - contour_wrapper.w) < 20:
-            checks.append(True)
-        if abs(self.shape.y - contour_wrapper.y) < 20 and abs(self.shape.y - contour_wrapper.y) < 20:
-            checks.append(True)
-        if checks.count(True) >= 2:
+    def check_cws_array_ratios(self, cnts_array):
+        expected_ratio = 3.51
+        err = 0.1
+        ratio = 0
+        for i in range(0, len(cnts_array)):
+            for j in range(0, len(cnts_array)):
+                ratio = cnts_array[i].area / cnts_array[j].area
+                print ratio
+                if abs(ratio-expected_ratio) <= err and self.check_similarity_of_two_cw(cnts_array[i], cnts_array[j]):
+                    print "abs ratio" + str(abs(ratio-expected_ratio))
+                    return cnts_array[i], cnts_array[j]
+        return None, None
+    def check_similarity_of_two_cw(self, cw_1, cw_2):
+        err = 15
+        if abs(cw_1.cX - cw_2.cX) <= err:
+            #if abs(cw_1.cY - cw_2.cY) <= err:
             return True
         return False
 

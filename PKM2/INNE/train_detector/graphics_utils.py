@@ -20,5 +20,11 @@ def draw_status(image, shape, detected=False):
 
 
 def draw_contour(image, approx):
-    cv2.drawContours(image, [approx], -1, (0, 0, 255), 4)
+    cv2.drawContours(image, [approx], -1, (0, 255, 255), 4)
+    pass
+
+
+def draw_circle(image, countour_wrapper):
+    cv2.circle(image, (int(countour_wrapper.x_mnc), int(countour_wrapper.y_mnc)), int(countour_wrapper.radius), (0, 255, 255), 2)
+    cv2.circle(image, (countour_wrapper.cX, countour_wrapper.cY), 5, (0, 0, 255), -1)
     pass
