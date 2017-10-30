@@ -1,9 +1,0 @@
-{
-    "banana": "False",
-    "depot": "False",
-    "face": "True",
-    "hand": "False",
-    "movement": "False",
-    "obstacles": "True",
-    "station": "False"
-}
