@@ -1,1 +1,0 @@
-<table style="width:100%"><tr><th>movement</th><th>depot</th><th>station</th><th>obstacles</th><th>hand</th><th>face</th><th>banana</th></tr><tr><td>False</td><td>False</td><td>False</td><td>False</td><td>False</td><td>False</td><td>False</td></tr></table>
