@@ -4,7 +4,14 @@
 <div class="main-container" style="text-align: center;">
           <div>
             <h1>PKMII - RestApi</h1>
-            <p class="lead"> Here is going to be some console logs and also boolean array of choosen algorythms.</p>
-        </div>
+              <p class="lead"> Below, you can see which algorithms are launched right now. <br/>
+                Refresh rhe page to see any changes.</p>
+             {% for row in log_data %}
+                <tr>
+                    <td><font color="blue">{{ row[0]|tojson|safe }}</font></td>
+                    <td>{{ row[1] }}</td>
+                </tr>
+             {% endfor %}
+            </div>
 </div>
 {% endblock  %}
