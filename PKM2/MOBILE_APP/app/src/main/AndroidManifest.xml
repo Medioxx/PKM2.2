@@ -30,6 +30,8 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".SetURLActivity_"></activity>
+        <activity android:name=".SettingsActivity_"></activity>
+
 
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>

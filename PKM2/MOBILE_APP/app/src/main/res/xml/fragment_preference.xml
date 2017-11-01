@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <EditTextPreference
+        android:key="ip_address"
+        android:title="@string/pref_connection_addr"
+        android:dialogTitle="@string/pref_connection_addr"
+
+        android:defaultValue="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</PreferenceScreen>

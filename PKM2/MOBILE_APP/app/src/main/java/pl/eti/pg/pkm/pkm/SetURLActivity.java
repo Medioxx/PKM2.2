@@ -26,7 +26,7 @@ public class SetURLActivity extends AppCompatActivity {
     protected void start_main_activity(){
         String url = address.getText().toString();
         String httpPort = port.getText().toString();
-
+//        SettingsActivity_.intent(this).start();
         final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(URLActivityAddress, url);
         intent.putExtra(URLActivityPort, httpPort);
