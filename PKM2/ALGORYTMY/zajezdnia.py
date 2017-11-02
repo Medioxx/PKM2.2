@@ -5,7 +5,7 @@ def zajezdnia(frame, zajezdnia_lower_value, zajezdnia_upper_value):
     
     # Color conversion
     img = frame[150:300,180:550]  
-    hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
     #searching in defined range
     zajezdnia = cv2.inRange(hsv, zajezdnia_lower_value, zajezdnia_upper_value)
