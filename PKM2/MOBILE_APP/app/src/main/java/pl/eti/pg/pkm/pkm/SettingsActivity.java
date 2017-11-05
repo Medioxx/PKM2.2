@@ -14,6 +14,4 @@ import org.androidannotations.annotations.sharedpreferences.SharedPref;
 public class SettingsActivity extends PreferenceActivity {
 
 
-
-
 }

@@ -7,8 +7,20 @@
         android:key="ip_address"
         android:title="@string/pref_connection_addr"
         android:dialogTitle="@string/pref_connection_addr"
+        android:summary="0.0.0.0"
 
         android:defaultValue="0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <EditTextPreference
+        android:key="port_address"
+        android:title="@string/pref_connection_addr"
+        android:dialogTitle="@string/pref_connection_addr"
+        android:summary="0.0.0.0"
+
+        android:defaultValue="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </PreferenceScreen>
