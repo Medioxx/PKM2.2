@@ -24,13 +24,17 @@ public class StreamActivity extends AppCompatActivity {
 
     private static final int TIMEOUT = 5;
 
-    @BindView(R.id.mjpegViewDefault)
-    MjpegView mjpegView;
+//    @BindView(R.id.mjpegViewDefault2)
+    MjpegView mjpegView1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        mjpegView1 = (MjpegView) findViewById(R.id.mjpegViewDefault2);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stream);
+        mjpegView1 = (MjpegView) findViewById(R.id.mjpegViewDefault2);
+
         ButterKnife.bind(this);
     }
 
@@ -43,17 +47,18 @@ public class StreamActivity extends AppCompatActivity {
     private DisplayMode calculateDisplayMode() {
         int orientation = getResources().getConfiguration().orientation;
         return orientation == Configuration.ORIENTATION_LANDSCAPE ?
-                DisplayMode.FULLSCREEN : DisplayMode.BEST_FIT;
+                DisplayMode.FULLSCREEN : DisplayMode.FULLSCREEN;
     }
 
     private void loadIpCam() {
         Mjpeg.newInstance()
-                .open(getPreference("http://192.168.1.3:5000/video_feed"), TIMEOUT)
+                .open("http://192.168.1.3:5000/video_feed", TIMEOUT)
                 .subscribe(
                         inputStream -> {
-                            mjpegView.setSource(inputStream);
-                            mjpegView.setDisplayMode(calculateDisplayMode());
-                            mjpegView.showFps(true);
+                            mjpegView1.setSource(inputStream);
+                            mjpegView1.setDisplayMode(calculateDisplayMode());
+                            mjpegView1.showFps(true);
+
                         },
                         throwable -> {
                             Log.e(getClass().getSimpleName(), "mjpeg error", throwable);
@@ -70,7 +75,7 @@ public class StreamActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mjpegView.stopPlayback();
+        mjpegView1.stopPlayback();
     }
 
 }

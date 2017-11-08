@@ -31,6 +31,16 @@
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".SetURLActivity_"></activity>
         <activity android:name=".SettingsActivity_"></activity>
+        <activity
+            android:name=".StreamActivity"
+            android:label="Stream"
+            android:parentActivityName=".Welcome">
+
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="pl.eti.pg.pkm.pkm.Welcome" />
+        </activity>
+
 
 
     </application>

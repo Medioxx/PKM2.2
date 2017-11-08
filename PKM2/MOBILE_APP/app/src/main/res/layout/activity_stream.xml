@@ -8,9 +8,10 @@
     tools:context="pl.eti.pg.pkm.pkm.StreamActivity">
 
     <com.github.niqdev.mjpeg.MjpegSurfaceView
-        android:id="@+id/mjpegViewDefault"
+        android:id="@+id/mjpegViewDefault2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="5dp"
         stream:type="stream_default" />
 
 </RelativeLayout>
