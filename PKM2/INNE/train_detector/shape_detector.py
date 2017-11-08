@@ -9,7 +9,7 @@ triangle_str = "triangle"
 
 
 class Shape:
-    def __init__(self, type="", color="", area=0, center_x=0, center_y=0, (x, y, w, h)=(0, 0, 0, 0)):
+    def __init__(self, type="", color="", area=0, center_x=0, center_y=0, x=0, y=0, w=0, h=0):
         self.type = type
         self.color = color
         self.area = area
@@ -41,7 +41,7 @@ class Shape:
             self.type = "unknown"
         pass
 
-    def set_size(self, (x, y, w, h)):
+    def set_size(self, x, y, w, h):
         (self.x, self.y, self.w, self.h) = (x, y, w, h)
         pass
 
@@ -103,16 +103,18 @@ class ShapeDetector:
                     #if self.shape.is_blue():
                     self.detected = True
                     self.shape.set_center(CW.cX, CW.cY)
-                    self.shape.set_size((CW.x, CW.y, CW.w, CW.h))
+                    self.shape.set_size(CW.x, CW.y, CW.w, CW.h)
 
-                    print self.shape
-                    print CW.CL.mean
+                    print(self.shape)
+                    print(CW.CL.mean)
 
-
+            if len(CW.approx == 3):
+                if 10 <= CW.area <= 100:
+                    cv2.drawContours(self.IW.output_image, [CW.approx], -1, (0, 255, 255), 4)
                     #graphics_utils.draw_contour(self.IW.output_image, CW.approx)
 
         for cont in array_of_contours:
-            print str(cont.cX) + ", " + str(cont.cX) + ", " + str(cont.area)
+            print(str(cont.cX) + ", " + str(cont.cX) + ", " + str(cont.area))
 
         #if len(array_of_contours) == 2:
             #print array_of_contours[0].area / array_of_contours[1].area
@@ -121,11 +123,11 @@ class ShapeDetector:
             if a is None and b is None:
                 pass
             else:
-                print "podejrzane kontury: " + str(a.area) + ", " + str(b.area)
-                print "cX_1: " + str(a.cX) + ", cY_1: " + str(a.cY)
-                print "cX_2: " + str(b.cX) + ", cY_2: " + str(b.cY)
+                print("podejrzane kontury: " + str(a.area) + ", " + str(b.area))
+                print("cX_1: " + str(a.cX) + ", cY_1: " + str(a.cY))
+                print("cX_2: " + str(b.cX) + ", cY_2: " + str(b.cY))
                 self.shape.set_center(b.cX, b.cY)
-                self.shape.set_size((b.x, b.y, b.w, b.h))
+                self.shape.set_size(b.x, b.y, b.w, b.h)
                 graphics_utils.draw_contour(self.IW.output_image, a.approx)
                 graphics_utils.draw_contour(self.IW.output_image, b.approx)
                 graphics_utils.draw_crosshair(self.IW.output_image, self.shape)
@@ -148,9 +150,9 @@ class ShapeDetector:
         for i in range(0, len(cnts_array)):
             for j in range(0, len(cnts_array)):
                 ratio = cnts_array[i].area / cnts_array[j].area
-                print ratio
+                print(ratio)
                 if abs(ratio-expected_ratio) <= err and self.check_similarity_of_two_cw(cnts_array[i], cnts_array[j]):
-                    print "abs ratio" + str(abs(ratio-expected_ratio))
+                    print("abs ratio" + str(abs(ratio-expected_ratio)))
                     return cnts_array[i], cnts_array[j]
         return None, None
     def check_similarity_of_two_cw(self, cw_1, cw_2):
