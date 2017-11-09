@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import os
 from ALGORYTMY.peron import peron
 from ALGORYTMY.zajezdnia import zajezdnia
 from ALGORYTMY.Adam_ruch import ruchomy
@@ -86,7 +87,7 @@ def initReka():
     track_window = (r, a, c, b)
     x, y, w, h, = 100, 100, 400, 400
     #!
-    frames = cv2.imread('C:/Users/DELL/Desktop/PKM2-RELEASE_1.5(1)/PKM2-RELEASE_1.5/PKM2/INNE/ramka.jpg')
+    frames = cv2.imread(os.path.dirname(os.path.realpath(__file__)) + '\INNE\\ramka.jpg')
     obrazDloni = frames[y:y + h, x:x + w]
     # Dobor odpowiedniej maski filtrujaca nasza dlon z niepotrzebnych elementow
     dlonHsv = cv2.cvtColor(obrazDloni, cv2.COLOR_BGR2HSV)

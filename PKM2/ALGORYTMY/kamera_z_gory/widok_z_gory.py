@@ -10,6 +10,7 @@ def group_lines(lines):
         x = line[0][0]/12.80
         grouped[int(x)] += 1
     return grouped
+  
 def find_rails(lines, clusters ,avg):
     max, _ = peakdet(group_lines(lines), 20)
 
@@ -30,6 +31,7 @@ def find_rails(lines, clusters ,avg):
     plt.show()
 
     return clusters[cluster], avg
+  
 def find_trains(lines, clusters, avg):
     peaks, _ = peakdet(group_lines(lines), 10)
     new_peaks = []
@@ -69,6 +71,7 @@ def find_trains(lines, clusters, avg):
 
 def przeszkody(frame, counter, rails, clusters, avg):
     subframe=frame
+
 
     # wykrywanie lini
     edges = cv2.Canny(subframe, 50, 250, apertureSize=3)
