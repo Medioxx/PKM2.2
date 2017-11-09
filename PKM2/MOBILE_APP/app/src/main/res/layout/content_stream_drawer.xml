@@ -12,10 +12,11 @@
 
     <Button
         android:id="@+id/play_stop_btn"
+        android:onClick="onClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/start_stream" />
-    
+
     <com.github.niqdev.mjpeg.MjpegSurfaceView
         android:id="@+id/mjpegViewDefault2"
         android:layout_width="match_parent"

@@ -27,7 +27,6 @@ public class WelcomeScreen extends AppCompatActivity{
         Animation myAnimation = AnimationUtils.loadAnimation(this, R.anim.welcometransition);
         textView.startAnimation(myAnimation);
         imageView.startAnimation(myAnimation);
-        final Intent intent = new Intent(this, StreamDrawer.class);
         Thread timer = new Thread(){
             public void run() {
                 try {
@@ -35,7 +34,7 @@ public class WelcomeScreen extends AppCompatActivity{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    startActivity(intent);
+                    SetURLActivity_.intent(WelcomeScreen.this).start();
                     finish();
                 }
             }

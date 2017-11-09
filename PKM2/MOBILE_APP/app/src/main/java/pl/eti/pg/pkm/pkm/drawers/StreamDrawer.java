@@ -2,9 +2,11 @@ package pl.eti.pg.pkm.pkm.drawers;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,8 +17,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.github.niqdev.mjpeg.DisplayMode;
+import com.github.niqdev.mjpeg.Mjpeg;
+import com.github.niqdev.mjpeg.MjpegView;
+
+import butterknife.ButterKnife;
 import pl.eti.pg.pkm.pkm.R;
 
 public class StreamDrawer extends AppCompatActivity
@@ -25,17 +33,17 @@ public class StreamDrawer extends AppCompatActivity
     DrawerLayout drawer;
     NavigationView navigationView;
     Toolbar toolbar = null;
-    private VideoView videoView;
     private Button btnPlayPause;
     private ProgressDialog progressDialog;
-    private String videoURL = "https://archive.org/download/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4";
+    private String videoURL = "http://192.168.1.3:5000/video_feed";
+    private static final int TIMEOUT = 5;
+    MjpegView mjpegView1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stream_drawer);
-
-        videoView = (VideoView) findViewById(R.id.videoView);
         btnPlayPause = (Button) findViewById(R.id.play_stop_btn);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -49,6 +57,8 @@ public class StreamDrawer extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        mjpegView1 = (MjpegView) findViewById(R.id.mjpegViewDefault2);
+        ButterKnife.bind(this);
     }
 
     @Override
@@ -58,35 +68,49 @@ public class StreamDrawer extends AppCompatActivity
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         try {
-            if (!videoView.isPlaying()) {
-                Uri uri = Uri.parse(videoURL);
-                videoView.setVideoURI(uri);
-                videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-//                        btnPlayPause.setImageResource(R.drawable.ic_play);
-                    }
-                });
+            if (!mjpegView1.isStreaming()) {
+                loadIpCam();
+
             } else {
-                videoView.pause();
-//                btnPlayPause.setImageResource(R.drawable.ic_play);
-                progressDialog.dismiss();
+                mjpegView1.stopPlayback();
+                mjpegView1.clearStream();
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
 
         }
+        progressDialog.dismiss();
 
-        videoView.requestFocus();
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+    }
 
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                progressDialog.dismiss();
-                mediaPlayer.setLooping(true);
-                videoView.start();
-//                btnPlayPause.setImageResource(R.drawable.ic_pause);
-            }
-        });
+
+    private DisplayMode calculateDisplayMode() {
+        int orientation = getResources().getConfiguration().orientation;
+        return orientation == Configuration.ORIENTATION_LANDSCAPE ?
+                DisplayMode.FULLSCREEN : DisplayMode.FULLSCREEN;
+    }
+
+    private void loadIpCam() {
+        Mjpeg.newInstance()
+                .open(videoURL, TIMEOUT)
+                .subscribe(
+                        inputStream -> {
+                            mjpegView1.setSource(inputStream);
+                            mjpegView1.setDisplayMode(calculateDisplayMode());
+                            mjpegView1.showFps(true);
+
+                        },
+                        throwable -> {
+                            Log.e(getClass().getSimpleName(), "mjpeg error", throwable);
+                            Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
+                        });
+    }
+
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mjpegView1.stopPlayback();
     }
 
     @Override

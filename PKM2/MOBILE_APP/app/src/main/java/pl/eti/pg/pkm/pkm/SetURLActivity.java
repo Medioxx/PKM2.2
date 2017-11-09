@@ -10,6 +10,8 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
+import pl.eti.pg.pkm.pkm.drawers.StreamDrawer;
+
 import static pl.eti.pg.pkm.pkm.DataPassingMessages.URLActivityAddress;
 import static pl.eti.pg.pkm.pkm.DataPassingMessages.URLActivityPort;
 
@@ -27,7 +29,7 @@ public class SetURLActivity extends AppCompatActivity {
         String url = address.getText().toString();
         String httpPort = port.getText().toString();
 //        SettingsActivity_.intent(this).start();
-        final Intent intent = new Intent(this, MainActivity.class);
+        final Intent intent = new Intent(this, StreamDrawer.class);
         intent.putExtra(URLActivityAddress, url);
         intent.putExtra(URLActivityPort, httpPort);
         startActivity(intent);
