@@ -1,17 +1,25 @@
 from shape_detector import ShapeDetector
 import cv2
-
+import color_labeler
 def image():
     frame = cv2.imread("../shapes/test2.jpg")
     shape = ShapeDetector(frame)
     cv2.imshow('imuout', shape.IW.output_image)
+
+   # cv2.imshow('imuout2', shape.IW.image[236:300, 554:618])
+    #cl = color_labeler.ColorLabeler(shape.IW.image[236:300, 554:618])
+    #print(shape.IW.output_image[580, 227])
+
+    #cv2.imshow('imuout2', shape.IW.image[236:300, 554:618])
+    #cl = color_labeler.ColorLabeler(shape.IW.image[236:300, 554:618])
+    #print(shape.IW.output_image[580, 227])
     cv2.imshow('imedged', shape.IW.edged)
     cv2.waitKey(0)
     pass
 
 
 def video():
-    cap = cv2.VideoCapture('../shapes/video1.mp4')
+    cap = cv2.VideoCapture('../shapes/biale_przejazd_z_znacznikami.avi')
     while cap.isOpened():
         ret, frame = cap.read()
 
@@ -45,9 +53,9 @@ def web_cam():
 
 
 def main():
-    image()
-    #video()
-   #web_cam()
+    #image()
+    video()
+    #web_cam()
     pass
 
 
