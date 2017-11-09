@@ -124,6 +124,10 @@ class ShapeDetector:
             if self.shape.is_square():
                 if self.shape.is_area_higer_than(500):
                     #cv2.drawContours(self.IW.output_image, [CW.approx], -1, (0, 255, 255), 4)
+<<<<<<< HEAD
+=======
+                    #array_of_contours.append(CW)
+>>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
                     array_of_contours = self.add_cw_to_similarity_array(array_of_contours, CW)
                     #self.shape.set_color(CW.get_color(self.IW.lab))
                     #if self.shape.is_blue():
@@ -144,11 +148,11 @@ class ShapeDetector:
                     self.shape.set_size(CW.x, CW.y, CW.w, CW.h)
 
                     print(self.shape)
-                    print(CW.CL.mean)
+                    #print(CW.CL.mean)
 
-            if len(CW.approx == 3):
-                if 10 <= CW.area <= 100:
-                    cv2.drawContours(self.IW.output_image, [CW.approx], -1, (0, 255, 255), 4)
+            #if len(CW.approx == 3):
+                #if 10 <= CW.area <= 100:
+                    #cv2.drawContours(self.IW.output_image, [CW.approx], -1, (0, 255, 255), 4)
                     #graphics_utils.draw_contour(self.IW.output_image, CW.approx)
 
         for cont in array_of_contours:
@@ -204,10 +208,16 @@ class ShapeDetector:
         cnts_array.append(CW)
         return cnts_array
 
+<<<<<<< HEAD
       
     def check_cws_array_ratios(self, cnts_array, exp_ratio, error):
         expected_ratio = exp_ratio
         err = error
+=======
+    def check_cws_array_ratios(self, cnts_array):
+        expected_ratio = 4.5
+        err = 1
+>>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
         ratio = 0
         for i in range(0, len(cnts_array)):
             for j in range(0, len(cnts_array)):
@@ -219,7 +229,6 @@ class ShapeDetector:
                         return cnts_array[i], cnts_array[j]
 =======
                 ratio = cnts_array[i].area / cnts_array[j].area
-                print(ratio)
                 if abs(ratio-expected_ratio) <= err and self.check_similarity_of_two_cw(cnts_array[i], cnts_array[j]):
                     print("abs ratio" + str(abs(ratio-expected_ratio)))
                     return cnts_array[i], cnts_array[j]
@@ -231,6 +240,7 @@ class ShapeDetector:
         if abs(cw_1.cX - cw_2.cX) <= err:
             if abs(cw_1.cY - cw_2.cY) <= err:
                 return True
+<<<<<<< HEAD
 =======
 
         for c in self.IW.contours_shape():
@@ -292,6 +302,8 @@ class ShapeDetector:
         if checks.count(True) >= 2:
             return True
 >>>>>>> ea1d704... inital algorithm
+=======
+>>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
         return False
 
     def temp_is_red(self, mean):

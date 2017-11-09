@@ -1,20 +1,27 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 >>>>>>> ea1d704... inital algorithm
+=======
+>>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
 import numpy as np
 import cv2
 import imutils
 
 class ColorLabeler:
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
     def __init__(self, area):
         self.area = area
         self.mean = cv2.mean(self.area)
         self.sum = cv2.sumElems(self.area)
         print("MEAN!: " + str(self.mean))
         print("SUM!: " + str(self.sum))
+<<<<<<< HEAD
         pass
 =======
     def __init__(self):
@@ -56,3 +63,6 @@ class ColorLabeler:
                 self.minDist = (d, i)
         return self.colorNames[self.minDist[1]]
 >>>>>>> ea1d704... inital algorithm
+=======
+        pass
+>>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
