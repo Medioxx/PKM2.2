@@ -6,7 +6,7 @@ def image():
     shape = ShapeDetector(frame)
     cv2.imshow('imuout', shape.IW.output_image)
 
-   # cv2.imshow('imuout2', shape.IW.image[236:300, 554:618])
+   # cv2.imshow('imuout2', shape.IW.imaqge[236:300, 554:618])
     #cl = color_labeler.ColorLabeler(shape.IW.image[236:300, 554:618])
     #print(shape.IW.output_image[580, 227])
 
