@@ -33,12 +33,11 @@
         <activity android:name=".SettingsActivity_"></activity>
         <activity
             android:name=".StreamActivity"
-            android:label="Stream"
-            android:parentActivityName=".Welcome">
+            android:label="Stream">
 
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value="pl.eti.pg.pkm.pkm.Welcome" />
+            android:value="pl.eti.pg.pkm.pkm.WelcomeScreen" />
         </activity>
 
 
