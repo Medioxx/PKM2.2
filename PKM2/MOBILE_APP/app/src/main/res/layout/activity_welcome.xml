@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="pl.eti.pg.pkm.improvedpkmapplication.WelcomeScreen">
+    tools:context="pl.eti.pg.pkm.pkm.WelcomeScreen">
 
     <LinearLayout
         android:gravity="center"

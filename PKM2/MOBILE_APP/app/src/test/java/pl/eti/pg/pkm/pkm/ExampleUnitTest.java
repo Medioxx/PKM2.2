@@ -1,4 +1,4 @@
-package pl.eti.pg.pkm.improvedpkmapplication;
+package pl.eti.pg.pkm.pkm;
 
 import org.junit.Test;
 

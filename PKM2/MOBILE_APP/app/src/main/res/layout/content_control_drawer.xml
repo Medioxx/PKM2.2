@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="pl.eti.pg.pkm.improvedpkmapplication.drawers.ControlDrawer"
+    tools:context="pl.eti.pg.pkm.pkm.drawers.ControlDrawer"
     android:background="@color/colorBackground"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"

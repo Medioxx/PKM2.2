@@ -9,7 +9,7 @@
     android:paddingTop="16dp"
     android:paddingRight="16dp"
     android:paddingBottom="16dp"
-    tools:context="pl.eti.pg.pkm.improvedpkmapplication.drawers.AlgorithmsDrawer">
+    tools:context="pl.eti.pg.pkm.pkm.drawers.AlgorithmsDrawer">
 
 
     <CheckBox

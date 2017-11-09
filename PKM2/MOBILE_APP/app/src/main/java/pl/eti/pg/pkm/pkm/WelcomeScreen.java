@@ -1,4 +1,4 @@
-package pl.eti.pg.pkm.improvedpkmapplication;
+package pl.eti.pg.pkm.pkm;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import pl.eti.pg.pkm.improvedpkmapplication.drawers.StreamDrawer;
+import pl.eti.pg.pkm.pkm.drawers.StreamDrawer;
 
 /**
  * Created by EO NETWORKS on 07.11.2017.

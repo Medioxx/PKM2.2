@@ -1,4 +1,4 @@
-package pl.eti.pg.pkm.improvedpkmapplication;
+package pl.eti.pg.pkm.pkm;
 
 /**
  * Created by EO NETWORKS on 07.11.2017.

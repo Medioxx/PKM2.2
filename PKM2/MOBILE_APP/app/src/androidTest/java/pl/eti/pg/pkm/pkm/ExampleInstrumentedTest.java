@@ -1,4 +1,4 @@
-        package pl.eti.pg.pkm.improvedpkmapplication;
+        package pl.eti.pg.pkm.pkm;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
