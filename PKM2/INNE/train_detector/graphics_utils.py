@@ -10,6 +10,7 @@ def draw_crosshair(image, shape):
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 def draw_contour(image, approx):
     cv2.drawContours(image, [approx], -1, (0, 255, 255), 4)
 =======
@@ -26,4 +27,8 @@ def draw_status(image, shape, detected=False):
 def draw_contour(image, approx):
     cv2.drawContours(image, [approx], -1, (0, 0, 255), 4)
 >>>>>>> ea1d704... inital algorithm
+=======
+def draw_contour(image, approx):
+    cv2.drawContours(image, [approx], -1, (0, 255, 255), 4)
+>>>>>>> 23982a2... traingles + sques detection in one frame
     pass
