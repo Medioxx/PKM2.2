@@ -48,7 +48,6 @@ class ContourWrapper:
         self.area = cv2.contourArea(self.contour)
         # cX and cY are center of mass of contour
         self.cX, self.cY = self.__get_cx_cy()
-        self.CL = ColorLabeler()
 
     def __get_cx_cy(self):
         cx = 0
@@ -57,8 +56,3 @@ class ContourWrapper:
             cx = int((self.M["m10"] / self.M["m00"]) * self.ratio)  # TODO CHECK IF THIS WORKS
             cy = int((self.M["m01"] / self.M["m00"]) * self.ratio)  # TODO CHECK IF THIS WORKS
         return cx, cy
-
-    def get_color(self, frame):
-        color = self.CL.label(frame, self.contour)
-        return color
-
