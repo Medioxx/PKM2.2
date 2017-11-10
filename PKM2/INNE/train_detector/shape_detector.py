@@ -158,6 +158,7 @@ class ShapeDetector:
         cnts_array.append(CW)
         return cnts_array
 
+      
     def check_cws_array_ratios(self, cnts_array, exp_ratio, error):
         expected_ratio = exp_ratio
         err = error

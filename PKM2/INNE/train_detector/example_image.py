@@ -1,8 +1,11 @@
 from shape_detector import ShapeDetector
+from hsv_detection import HSV_Detector
 import cv2
 import color_labeler
+
 def image():
     frame = cv2.imread("../shapes/test2.jpg")
+
     shape = ShapeDetector(frame)
     cv2.imshow('imuout', shape.IW.output_image)
 
@@ -19,7 +22,9 @@ def image():
 
 
 def video():
+
     cap = cv2.VideoCapture('../shapes/biale_przejazd_z_znacznikami.avi')
+
     while cap.isOpened():
         ret, frame = cap.read()
 
