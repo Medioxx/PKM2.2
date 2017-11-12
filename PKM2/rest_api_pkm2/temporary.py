@@ -1,36 +1,35 @@
+import requests
+import json
+import cv2
+import sys
+algorithms = {"movement": "False", "depot": "False", "station": "False", "obstacles": "False", "hand": "False",
+                   "face": "False", "banana": "True"}
 
-class Algorythms:
-    def __init__(self):
+url_get = 'http://127.0.0.1:5000/logs/get_algorithms'
+url_set = 'http://127.0.0.1:5000/logs/set_algorithms'
 
-        #self.keys = ["movement", "depot", "station", "obstacles", "hand", "face", "banana"]
-        #self.values = ["False", "False", "False", "False", "False", "False", "False"]
-        #self.algorythms = map(self.keys, self.values)
-        self.algorythms = {"movement" : "False","depot" : "False","station" : "False","obstacles": "False","hand" : "False","face" : "False","banana" : "False"}
-        self.log_output_table = {'type': [u'movement', u'depot', u'station', u'obstacles', u'hand', u'face', u'banana'],
-                                 'launched': [u"False", u"False", u"False", u"False", u"False", u"False", u"False"]}
-
-    def set_algorythms(self, data):
-        #data = request.json
-        self.algorythms["movement"] = data['movement']
-        self.algorythms["depot"] = data['depot']
-        self.algorythms["station"] = data['station']
-        self.algorythms["obstacles"] = data['obstacles']
-        self.algorythms["hand"] = data['hand']
-        self.algorythms["face"] = data['face']
-        self.algorythms["banana"] = data['banana']
-        self.log_output_table = {'type': [u'movement', u'depot', u'station', u'obstacles', u'hand', u'face', u'banana'],
-                                 'launched': [u"False", u"False", u"False", u"False", u"False", u"False", u"False"]}
-    def retFalse(self):
-        return "False"
-
-    def retTrue(self):
-        return "True"
+# GET
 
 
-    def get_algorythms(self):
-        pass
+def get_algorithms():
+    #get response from RestApi
+    rest_api_response = requests.get(url_get)
+    # Convert response to json/dictionary
+    rest_api_dictionary = rest_api_response.json()
 
-alg = Algorythms()
+    algorithms["movement"] = rest_api_dictionary['movement']
+    algorithms["depot"] = rest_api_dictionary['depot']
+    algorithms["station"] = rest_api_dictionary['station']
+    algorithms["obstacles"] = rest_api_dictionary['obstacles']
+    algorithms["hand"] = rest_api_dictionary['hand']
+    algorithms["face"] = rest_api_dictionary['face']
+    algorithms["banana"] = rest_api_dictionary['banana']
 
-print(alg.algorythms.keys())
-print(alg.log_output_table.keys())
+
+def set_algorithms():
+    requests.post(url_set, json=algorithms)
+
+set_algorithms()
+#get_algorithms()
+print(algorithms)
+

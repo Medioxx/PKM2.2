@@ -7,6 +7,9 @@ import numpy as np
 import os
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+import threading
+
+import requests
 
 tel = {'peron': False, 'zajezdnia': False, 'reka': False, 'przeszkody': False, "czerwony": False, 'twarz': False,
        'ruch': False, 'banan': False}
@@ -14,10 +17,16 @@ tel = {'peron': False, 'zajezdnia': False, 'reka': False, 'przeszkody': False, "
 
 class Okno(QMainWindow):
     def __init__(self):
+        # Commuinication
+        self.algorithms = {"movement" : "False", "depot" : "False", "station" : "False", "obstacles": "False", "hand" : "False", "face" : "False", "banana" : "False"}
+        self.url_get = 'http://127.0.0.1:5000/logs/get_algorithms'
+        self.url_set = 'http://127.0.0.1:5000/logs/set_algorithms'
+
+
         QMainWindow.__init__(self)
         self.ui = loadUi('PKM_GUI.ui', self)
         self.ui.button_stream_start.clicked.connect(self.stream_start)
-        self.ui.button_nagranie_start.clicked.connect(self.nagranie_start)
+        #self.ui.button_nagranie_start.clicked.connect(self.send_json)
         #self.ui.button_kalibruj.clicked.connect(self.kalibruj_start)
 
         #self.ui.button_program_stop.clicked.connect(self.program_stop)
@@ -39,11 +48,19 @@ class Okno(QMainWindow):
 
         self.ui.detekcja_zajezdnia_checkBox.setStyleSheet('QCheckBox {color: white}')
         self.ui.detekcja_przeszkody_checkBox.setStyleSheet('QCheckBox  {color: white}')
+
         self.ui.detekcja_twarz_checkBox.setStyleSheet('QCheckBox  {color: white}')
+        self.ui.detekcja_twarz_checkBox.stateChanged.connect(self.send_face_json)
+
         self.ui.detekcja_banan_checkBox.setStyleSheet('QCheckBox  {color: white}')
         self.ui.detekcja_perony_checkBox.setStyleSheet('QCheckBox  {color: white}')
         self.ui.detekcja_reka_checkBox.setStyleSheet('QCheckBox  {color: white}')
         self.ui.detekcja_ruch_checkBox.setStyleSheet('QCheckBox  {color: white}')
+
+        # Checkbox initialization
+        self.set_checkboxes()
+        #self.interval()
+
 
 
     #def kalibruj_start(self):
@@ -148,10 +165,60 @@ class Okno(QMainWindow):
         print(filename[0])
         return filename[0]
 
+    ###################################### JSON Communication #######################################
+
+    # Method, which downloads current dictionary and applies it to local dictionary
+    def get_algorithms(self):
+        # get response from RestApi
+        rest_api_response = requests.get(self.url_get)
+        # Convert response to json/dictionary
+        rest_api_dictionary = rest_api_response.json()
+
+        self.algorithms["movement"] = rest_api_dictionary['movement']
+        self.algorithms["depot"] = rest_api_dictionary['depot']
+        self.algorithms["station"] = rest_api_dictionary['station']
+        self.algorithms["obstacles"] = rest_api_dictionary['obstacles']
+        self.algorithms["hand"] = rest_api_dictionary['hand']
+        self.algorithms["face"] = rest_api_dictionary['face']
+        self.algorithms["banana"] = rest_api_dictionary['banana']
+
+    # Method which sends JSON to RestApi
+    def set_algorithms(self):
+        requests.post(self.url_set, json=self.algorithms)
+
+    def send_face_json(self):
+        if self.ui.detekcja_twarz_checkBox.isChecked():
+            self.algorithms["face"] = "True"
+        else:
+            self.algorithms["face"] = "False"
+        requests.post(self.url_set, json=self.algorithms)
+        pass
+
+    #
+    def set_checkboxes(self):
+        # First, dowload current dict from RestApi
+        self.get_algorithms()
+
+        if self.algorithms["face"] == "True":
+            self.ui.detekcja_twarz_checkBox.setChecked(True)
+        else:
+            self.ui.detekcja_twarz_checkBox.setChecked(False)
+
+
+    def interval(self):
+        threading.Timer(1.0, self.interval).start()
+        self.set_checkboxes()
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
     qApp = QApplication(sys.argv)
     app = Okno()
     app.show()
+    app.interval()
     sys.exit(qApp.exec_())
