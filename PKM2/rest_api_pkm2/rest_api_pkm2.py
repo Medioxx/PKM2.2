@@ -3,8 +3,12 @@ import subprocess
 import time
 import flask
 import json
-
+from camera import Camera
+from Detection import Detection
+import cv2
 app = Flask(__name__)
+
+
 
 ##################################
 # 1.wykrywanie ruchu             #
@@ -103,7 +107,36 @@ def logs_set_algorithms():
     output_data = alg.get_algorithms()
     return output_data
 
+# Stream
+def gen(camera):
+    while True:
+        ################################ choose your camera man #####################################
+
+        #frame = camera.get_frame_aiball() # <-- ai-ball camera ()
+        frame = camera.get_frame_webcam() # <-- personal computer camera
+
+        # Achtung!
+        frame = detection.detect_choosen_objects(frame, alg.algorithms)
+
+
+        # Convert frame to format in which is it able to be displayed on a RestApi
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        frame_out = jpeg.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_out + b'\r\n\r\n')
+
+@app.route('/get_stream')
+def get_stream():
+    return Response(gen(Camera()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/stream')
+def stream():
+    return render_template('stream.html')
+
 
 if __name__ == "__main__":
     alg = Algorithms()
-    app.run(port=5000)
+    detection = Detection()
+    app.run(port=5000, threaded=True)
