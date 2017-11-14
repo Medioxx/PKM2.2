@@ -9,7 +9,9 @@ from collections import OrderedDict
 import numpy as np
 import cv2
 import imutils
+import math
 
+<<<<<<< HEAD
 class ColorLabeler:
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -66,3 +68,53 @@ class ColorLabeler:
 =======
         pass
 >>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
+=======
+class ColorLabel:
+    def __init__(self, area, w, h):
+        self.area = area
+        (self.width, self.height) = (w, h)
+        self.bgr = [0, 0, 0]
+        pass
+
+    def label(self, shape):
+        if shape == "square":
+            return self.__label_square()
+        if shape == "triangle":
+            return self.__label_triangle()
+
+    def __label_triangle(self):
+        cv2.imshow("Test", self.area[:self.height, :self.width])
+        #print (self.height)
+        #print (self.width)
+        for y in range(self.height):
+            half_width = math.floor(self.width/2)-y
+            #print (half_width)
+            for x in range(half_width-y, half_width+y):
+                self.__update_bgr(self.__max_channel(self.area[y, x]))
+        #print(self.bgr)
+        return self.__color()
+
+    def __label_square(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                self.__update_bgr(self.__max_channel(self.area[y, x]))
+        #print(self.bgr)
+        return self.__color()
+
+    def __color(self):
+        index = np.argmax(self.bgr)
+        if index == 0:
+            return "purple"
+        if index == 1:
+            return "green"
+        if index == 2:
+            return "red"
+
+    def __update_bgr(self, index):
+        self.bgr[index] += 1
+        pass
+
+    def __max_channel(self, pixel):
+        index = np.argmax(pixel)
+        return index
+>>>>>>> a7ee1b2... choosed better ColorLabel

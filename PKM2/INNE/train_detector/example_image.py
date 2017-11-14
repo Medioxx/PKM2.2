@@ -11,11 +11,16 @@ import color_labeler
 =======
 >>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
 def image():
+<<<<<<< HEAD
     frame = cv2.imread("../shapes/test2.jpg")
 <<<<<<< HEAD
 
 =======
 >>>>>>> e1c56d5... python3.6
+=======
+    frame = cv2.imread("../shapes/test4.jpg")
+    frame = cv2.resize(frame, None, fx=0.9, fy=0.9)
+>>>>>>> a7ee1b2... choosed better ColorLabel
     shape = ShapeDetector(frame)
     cv2.imshow('imuout', shape.IW.output_image)
 
@@ -56,6 +61,7 @@ def video():
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     cap = cv2.VideoCapture('../shapes/biale_przejazd_z_znacznikami.avi')
 
@@ -70,6 +76,9 @@ def video():
 =======
     cap = cv2.VideoCapture('../shapes/biale_przejazd_z_znacznikami.avi')
 >>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
+=======
+    cap = cv2.VideoCapture('../shapes/biale_przejazd_z_znacznikami.avi')#('../shapes/biale_przejazd_bez_pociagow.avi')#('../shapes/biale_przejazd_z_znacznikami.avi')
+>>>>>>> a7ee1b2... choosed better ColorLabel
     while cap.isOpened():
         ret, frame = cap.read()
 
@@ -124,6 +133,7 @@ def web_cam():
 def main():
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     #image()
 <<<<<<< HEAD
     video()
@@ -140,6 +150,10 @@ def main():
 =======
     #image()
     video()
+=======
+    image()
+    #video()
+>>>>>>> a7ee1b2... choosed better ColorLabel
     #web_cam()
 >>>>>>> 2f2e5fc... fixed square detection. started new colorlaber
     pass

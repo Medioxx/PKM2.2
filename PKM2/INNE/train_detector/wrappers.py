@@ -2,9 +2,12 @@ import cv2
 <<<<<<< HEAD
 from imutils import contours
 
+<<<<<<< HEAD
 =======
 >>>>>>> ea1d704... inital algorithm
 from color_labeler import ColorLabeler
+=======
+>>>>>>> a7ee1b2... choosed better ColorLabel
 import imutils
 import copy
 
@@ -29,9 +32,12 @@ class ImageWrapper:
         self.cnts = None
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> ea1d704... inital algorithm
+=======
+>>>>>>> a7ee1b2... choosed better ColorLabel
     def __contours(self, image):
         self.cnts = cv2.findContours(image.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         self.cnts = self.cnts[0] if imutils.is_cv2() else self.cnts[1]
@@ -53,8 +59,12 @@ class ContourWrapper:
         self.approx = cv2.approxPolyDP(self.contour, 0.04 * self.peri, True)
         self.M = cv2.moments(self.contour)
         (self.x, self.y, self.w, self.h) = cv2.boundingRect(self.approx)
+<<<<<<< HEAD
         self.bounding_rect = (self.x, self.y, self.w, self.h)
 <<<<<<< HEAD
+=======
+        self.bounding_rect = (self.y, self.x, self.w, self.h)
+>>>>>>> a7ee1b2... choosed better ColorLabel
         ((self.x_mnc, self.y_mnc), self.radius) = cv2.minEnclosingCircle(contour)
         self.area = cv2.contourArea(self.contour)
         # cX and cY are center of mass of contour

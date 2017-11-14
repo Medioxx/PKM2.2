@@ -4,9 +4,13 @@ import graphics_utils
 import numpy as np
 <<<<<<< HEAD
 import imutils
+<<<<<<< HEAD
 =======
 >>>>>>> ea1d704... inital algorithm
 
+=======
+import color_labeler
+>>>>>>> a7ee1b2... choosed better ColorLabel
 square_str = "square"
 triangle_str = "triangle"
 
@@ -114,6 +118,8 @@ class ShapeDetector:
         self.IW = ImageWrapper(image)
         self.shape = Shape()
         self.detected = False
+        self.stations = {'red': 'zajezdnia', 'green': 'strzyza', 'purple': 'kieplinek'}
+        self.trains = {'red': 6, 'green': 2, 'purple': 1}
         self.run()
         pass
 
@@ -225,7 +231,14 @@ class ShapeDetector:
                 graphics_utils.draw_contour(self.IW.output_image, b.approx)
                 graphics_utils.draw_crosshair(self.IW.output_image, self.shape)
 <<<<<<< HEAD
+<<<<<<< HEAD
                 print("wykryto pociag + (kolor)")
+=======
+                cl2 = color_labeler.ColorLabel(self.IW.image[b.y:b.y + b.h, b.x:b.x + b.w], b.w, b.h)
+                color2 = cl2.label("square")
+                print("wykryto pociag + " + str(color2))
+                graphics_utils.draw_train_staus(self.IW.output_image, str(self.trains[color2]) + ", " + color2)
+>>>>>>> a7ee1b2... choosed better ColorLabel
 
             #check triangles
             a, b = self.check_cws_array_ratios(array_of_contours, 8.5, 0.5)
@@ -240,9 +253,16 @@ class ShapeDetector:
                 graphics_utils.draw_contour(self.IW.output_image, a.approx)
                 graphics_utils.draw_contour(self.IW.output_image, b.approx)
                 graphics_utils.draw_crosshair(self.IW.output_image, self.shape)
+<<<<<<< HEAD
 =======
 >>>>>>> 23982a2... traingles + sques detection in one frame
                 print("wykryto zajezednie + (kolor)")
+=======
+                cl2 = color_labeler.ColorLabel(self.IW.image[b.y:b.y + b.h, b.x:b.x + b.w], b.w, b.h)
+                color2 = cl2.label("square")
+                print("wykryto stacje + " + str(color2))
+                graphics_utils.draw_station_status(self.IW.output_image, self.stations[color2] + ", " + color2)
+>>>>>>> a7ee1b2... choosed better ColorLabel
         pass
 
 

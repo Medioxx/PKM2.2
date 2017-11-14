@@ -1,6 +1,16 @@
 import cv2
 
 
+def draw_station_status(image, text):
+    string = "Station: " + text
+    cv2.putText(image, string, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
+    pass
+
+def draw_train_staus(image, numer):
+    string = "Train: " + str(numer)
+    cv2.putText(image, string, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
+    pass
+
 def draw_crosshair(image, shape):
     (startX, endX) = (int(shape.centerX - (shape.w * 0.15)), int(shape.centerX + (shape.w * 0.15)))
     (startY, endY) = (int(shape.centerY - (shape.h * 0.15)), int(shape.centerY + (shape.h * 0.15)))
