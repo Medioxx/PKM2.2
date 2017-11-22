@@ -16,11 +16,14 @@ def save_to_json(data,path):
         print("Failed to save configuration: {0}".format(err))
 
     return True
+
 def group_lines(lines):
     for line in lines:
         x = line[0][0]/12.80
         grouped[int(x)] += 1
     return grouped
+
+  
 def find_rails(lines, clusters ,avg):
     max, _ = peakdet(group_lines(lines), 20)
 
@@ -85,6 +88,7 @@ def find_trains(lines, clusters, avg):
 
 def przeszkody(frame, counter, rails, clusters, avg):
     subframe=frame
+
 
     # wykrywanie lini
     edges = cv2.Canny(subframe, 50, 250, apertureSize=3)

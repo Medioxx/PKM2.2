@@ -9,14 +9,39 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Welcome">
+        <activity android:name="pl.eti.pg.pkm.pkm.WelcomeScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="pl.eti.pg.pkm.pkm.drawers.StreamDrawer"
+            android:label="@string/title_stream"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="pl.eti.pg.pkm.pkm.drawers.AlgorithmsDrawer"
+            android:label="@string/title_algorithms"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="pl.eti.pg.pkm.pkm.drawers.ControlDrawer"
+            android:label="@string/title_control"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".MainActivity"></activity>
+        <activity android:name=".SetURLActivity_"></activity>
+        <activity android:name=".SettingsActivity_"></activity>
+        <activity
+            android:name=".StreamActivity"
+            android:label="Stream">
+
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="pl.eti.pg.pkm.pkm.WelcomeScreen" />
+        </activity>
+
+
+
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

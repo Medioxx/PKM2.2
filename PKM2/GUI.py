@@ -7,20 +7,31 @@ import numpy as np
 import os
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+import threading
+import requests
 
+#To remove in final step
 tel = {'peron': False, 'zajezdnia': False, 'reka': False, 'przeszkody': False, "czerwony": False, 'twarz': False,
        'ruch': False, 'banan': False}
 
 
 class Okno(QMainWindow):
     def __init__(self):
+        # Commuinication
+        self.algorithms = {"movement" : "False", "depot" : "False", "station" : "False", "obstacles": "False", "hand" : "False", "face" : "False", "banana" : "False"}
+        self.url_get = 'http://127.0.0.1:5000/logs/get_algorithms'
+        self.url_set = 'http://127.0.0.1:5000/logs/set_algorithms'
+
+
         QMainWindow.__init__(self)
         self.ui = loadUi('PKM_GUI.ui', self)
         self.ui.button_stream_start.clicked.connect(self.stream_start)
-        self.ui.button_nagranie_start.clicked.connect(self.nagranie_start)
+        #self.ui.button_nagranie_start.clicked.connect(self.send_json)
+       
+        #To remove in final step
         #self.ui.button_kalibruj.clicked.connect(self.kalibruj_start)
 
-        #self.ui.button_program_stop.clicked.connect(self.program_stop)
+        self.ui.button_program_stop.clicked.connect(self.program_stop)
         #self.ui.button_skutecznosc_dobrze.clicked.connect(self.skutecznosc_dobrze)
         #self.ui.button_skutecznosc_zle.clicked.connect(self.skutecznosc_zle)
 
@@ -38,13 +49,29 @@ class Okno(QMainWindow):
         self.ui.label_4.setStyleSheet('QLabel {color: white}')
 
         self.ui.detekcja_zajezdnia_checkBox.setStyleSheet('QCheckBox {color: white}')
+        self.ui.detekcja_zajezdnia_checkBox.stateChanged.connect(self.send_zajezdnia_json)
+       
         self.ui.detekcja_przeszkody_checkBox.setStyleSheet('QCheckBox  {color: white}')
+        self.ui.detekcja_przeszkody_checkBox.stateChanged.connect(self.send_przeszkody_json)
+              
         self.ui.detekcja_twarz_checkBox.setStyleSheet('QCheckBox  {color: white}')
+        self.ui.detekcja_twarz_checkBox.stateChanged.connect(self.send_face_json)
+              
         self.ui.detekcja_banan_checkBox.setStyleSheet('QCheckBox  {color: white}')
+        self.ui.detekcja_banan_checkBox.stateChanged.connect(self.send_banan_json)
+       
         self.ui.detekcja_perony_checkBox.setStyleSheet('QCheckBox  {color: white}')
+        self.ui.detekcja_perony_checkBox.stateChanged.connect(self.send_perony_json)
+              
         self.ui.detekcja_reka_checkBox.setStyleSheet('QCheckBox  {color: white}')
+        self.ui.detekcja_reka_checkBox.stateChanged.connect(self.send_reka_json)
+       
         self.ui.detekcja_ruch_checkBox.setStyleSheet('QCheckBox  {color: white}')
+        self.ui.detekcja_ruch_checkBox.stateChanged.connect(self.send_ruch_json)
 
+        # Checkbox initialization
+        self.set_checkboxes()
+        #self.interval()
 
     #def kalibruj_start(self):
      #   os.system("python obsluga_kalibratora.py ")
@@ -52,11 +79,11 @@ class Okno(QMainWindow):
     def program_stop(self):
         sys.exit()
 
-
     def stream_start(self):
         filmOrCam = 2
         print("\nStart detekcji na strumieniu: \n")
 
+        #To remove in final step
         if self.ui.detekcja_zajezdnia_checkBox.isChecked():
             tel['zajezdnia'] = True
             print("Detekcja zajezdni aktywna")
@@ -98,7 +125,7 @@ class Okno(QMainWindow):
             print("Detekcja banana aktywna")
         else:
             tel['banan'] = False
-
+        #To remove in final step
         os.system("python skryptRozdzielajacy.py " + str(3) + " czysty.avi " + str(tel))
 
     def nagranie_start(self):
@@ -110,6 +137,7 @@ class Okno(QMainWindow):
         filmOrCam = 1
         print("\nStart detekcji na nagraniu: \n")
 
+        #To remove in final step
         if self.ui.detekcja_zajezdnia_checkBox.isChecked():
             tel['zajezdnia'] = True
             print("Detekcja zajezdni aktywna")
@@ -138,9 +166,11 @@ class Okno(QMainWindow):
             tel['banan'] = True
             print("Detekcja banana aktywna")
 
+        #To remove in final step
         os.system("python skryptRozdzielajacy.py " + str(filmOrCam) + text2 + str(tel))
         print(tel)
 
+    #To remove in final step??????
     def wczytaj_plik(self):
         filename = QFileDialog.getOpenFileName(self, None, '',
                                              'Media file(*.mp4 *.wmv *.avi *.3gp *.oog *.mpeg *.mp2 *.wma *.mp3)'
@@ -148,10 +178,132 @@ class Okno(QMainWindow):
         print(filename[0])
         return filename[0]
 
+    ###################################### JSON Communication #######################################
 
+    # Method, which downloads current dictionary and applies it to local dictionary
+    def get_algorithms(self):
+        # get response from RestApi
+        rest_api_response = requests.get(self.url_get)
+        # Convert response to json/dictionary
+        rest_api_dictionary = rest_api_response.json()
+
+        self.algorithms["movement"] = rest_api_dictionary['movement']
+        self.algorithms["depot"] = rest_api_dictionary['depot']
+        self.algorithms["station"] = rest_api_dictionary['station']
+        self.algorithms["obstacles"] = rest_api_dictionary['obstacles']
+        self.algorithms["hand"] = rest_api_dictionary['hand']
+        self.algorithms["face"] = rest_api_dictionary['face']
+        self.algorithms["banana"] = rest_api_dictionary['banana']
+
+    # Method which sends JSON to RestApi
+    def set_algorithms(self):
+        requests.post(self.url_set, json=self.algorithms)
+
+    def send_face_json(self):
+        if self.ui.detekcja_twarz_checkBox.isChecked():
+            self.algorithms["face"] = "True"
+        else:
+            self.algorithms["face"] = "False"
+        requests.post(self.url_set, json=self.algorithms)
+        pass
+
+    def send_zajezdnia_json(self):
+        if self.ui.detekcja_zajezdnia_checkBox.isChecked():
+            self.algorithms["depot"] = "True"
+        else:
+            self.algorithms["depot"] = "False"
+        requests.post(self.url_set, json=self.algorithms)
+        pass
+
+    def send_przeszkody_json(self):
+        if self.ui.detekcja_przeszkody_checkBox.isChecked():
+            self.algorithms["obstacles"] = "True"
+        else:
+            self.algorithms["obstacles"] = "False"
+        requests.post(self.url_set, json=self.algorithms)
+        pass
+
+    def send_banan_json(self):
+        if self.ui.detekcja_banan_checkBox.isChecked():
+            self.algorithms["banana"] = "True"
+        else:
+            self.algorithms["banana"] = "False"
+        requests.post(self.url_set, json=self.algorithms)
+        pass
+
+    def send_perony_json(self):
+        if self.ui.detekcja_perony_checkBox.isChecked():
+            self.algorithms["station"] = "True"
+        else:
+            self.algorithms["station"] = "False"
+        requests.post(self.url_set, json=self.algorithms)
+        pass
+
+    def send_reka_json(self):
+        if self.ui.detekcja_reka_checkBox.isChecked():
+            self.algorithms["hand"] = "True"
+        else:
+            self.algorithms["hand"] = "False"
+        requests.post(self.url_set, json=self.algorithms)
+        pass
+
+    def send_ruch_json(self):
+        if self.ui.detekcja_ruch_checkBox.isChecked():
+            self.algorithms["movement"] = "True"
+        else:
+            self.algorithms["movement"] = "False"
+        requests.post(self.url_set, json=self.algorithms)
+        pass
+
+    #
+    def set_checkboxes(self):
+        # First, download current dict from RestApi
+        self.get_algorithms()
+
+        if self.algorithms["face"] == "True":
+            self.ui.detekcja_twarz_checkBox.setChecked(True)
+        else:
+            self.ui.detekcja_twarz_checkBox.setChecked(False)
+       
+       if self.algorithms["depot"] == "True":
+            self.ui.detekcja_zajezdnia_checkBox.setChecked(True)
+        else:
+            self.ui.detekcja_zajezdnia_checkBox.setChecked(False)
+       
+       if self.algorithms["obstacles"] == "True":
+            self.ui.detekcja_przeszkody_checkBox.setChecked(True)
+        else:
+            self.ui.detekcja_przeszkody_checkBox.setChecked(False)
+       
+       if self.algorithms["banana"] == "True":
+            self.ui.detekcja_banan_checkBox.setChecked(True)
+        else:
+            self.ui.detekcja_banan_checkBox.setChecked(False)
+       
+       if self.algorithms["station"] == "True":
+            self.ui.detekcja_perony_checkBox.setChecked(True)
+        else:
+            self.ui.detekcja_perony_checkBox.setChecked(False)
+       
+       if self.algorithms["hand"] == "True":
+            self.ui.detekcja_reka_checkBox.setChecked(True)
+        else:
+            self.ui.detekcja_reka_checkBox.setChecked(False)
+       
+       if self.algorithms["movement"] == "True":
+            self.ui.detekcja_ruch_checkBox.setChecked(True)
+        else:
+            self.ui.detekcja_ruch_checkBox.setChecked(False)
+       
+       
+    def interval(self):
+        threading.Timer(1.0, self.interval).start()
+        self.set_checkboxes()
+       
 
 if __name__ == '__main__':
     qApp = QApplication(sys.argv)
     app = Okno()
     app.show()
+    app.interval()
     sys.exit(qApp.exec_())
