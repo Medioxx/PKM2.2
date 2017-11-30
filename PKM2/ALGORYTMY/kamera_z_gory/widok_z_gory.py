@@ -18,6 +18,17 @@ def save_to_json(data,path):
     return True
 
 
+def save_to_json(data,path):
+    try:
+        print("Saving configuration...")
+        with open(path + "/top_camera.json", "w") as top_camera_file:
+            top_camera_file.write(json.dumps(data))
+        print("Configuration saved.")
+    except OSError as err:
+        print("Failed to save configuration: {0}".format(err))
+
+    return True
+
 def group_lines(lines):
     for line in lines:
         x = line[0][0]/12.80
@@ -43,7 +54,6 @@ def find_rails(lines):
         plt.plot(clusters[cluster][i][0],clusters[cluster][i][1], "x")
 
     plt.show()
-
     return clusters[cluster]
 
 
@@ -111,7 +121,7 @@ grouped = [0] * 100
 clusters = []
 counter = 0
 
-while(video.isOpened()):
+while(1):
     _, frame = video.read()
 
     counter, clusters = zajetosc_torow(counter, clusters)
