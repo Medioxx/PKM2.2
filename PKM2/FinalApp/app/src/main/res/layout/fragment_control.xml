@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/stopBtn"
+        android:layout_width="270dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:text="@string/stop_btn"/>
+
+    <Button
+        android:id="@+id/forwardBtn"
+        android:layout_width="270dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="@string/forward_btn"/>
+
+    <Button
+        android:id="@+id/backwardBtn"
+        android:layout_width="270dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="@string/backwards_btn"/>
+
+    <Button
+        android:id="@+id/neuroneBtn"
+        android:layout_width="270dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="@string/neurone_btn"/>
+
+    <TextView
+        android:id="@+id/textControl"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp" />
+</LinearLayout>
