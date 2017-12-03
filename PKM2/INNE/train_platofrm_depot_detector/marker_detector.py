@@ -186,19 +186,17 @@ class ShapeDetector:
         pass
 
     def detect_trains(self):
-        self.__detect(trains=True)
-        pass
+        return self.__detect(trains=True)
 
     def detect_platforms(self):
-        self.__detect(platforms=True)
-        pass
+        return self.__detect(platforms=True)
 
     def detect_depot(self):
-        self.__detect(depot=True)
-        pass
+        return self.__detect(depot=True)
 
     def __detect(self, platforms=False, depot=False, trains=False):
         self.detected = False
+        output = {"train": 0 , "platform": None}
         array_of_contours = []
         GU = GraphicsUtils()
         for c in self.IW.contours_shape():
@@ -207,17 +205,32 @@ class ShapeDetector:
             self.shape.area = CW.area
             self.shape.set_contour(CW.contour)
             if self.shape.is_square():
-                if self.shape.is_area_higer_than(500):
+                if self.shape.is_area_higer_than(200):
                     array_of_contours = self.add_cw_to_similarity_array(array_of_contours, CW)
 
             if self.shape.is_triangle():
-                if self.shape.is_area_higer_than(300):
+                if self.shape.is_area_higer_than(200):
                     array_of_contours = self.add_cw_to_similarity_array(array_of_contours, CW)
+        #
+        # for i in range(len(array_of_contours)):
+        #     print(i)
+        #     ratio = abs(array_of_contours[i].w / array_of_contours[i].h)
+        #     print(str(array_of_contours[i].w) + ', ' + str(array_of_contours[i].h) + ', ' + str(ratio))
+        #     if abs(ratio - 1.0) >= 0.3:
+        #         print(abs(ratio - 1.0))
+        #         array_of_contours.pop(i)
+        #         print('usunieto')
+        #         i -= 1
+
+        for elem in array_of_contours:
+            ratio = elem.w / elem.h
+            if abs(ratio - 1.0) >= 0.3:
+                array_of_contours.remove(elem)
 
         if len(array_of_contours) >= 2:
             if trains is True:
                 #check squres
-                a, b = self.check_cws_array_ratios(array_of_contours, 4.5, 0.5)
+                a, b = self.check_cws_array_ratios(array_of_contours, 4.5, 1)
                 if a is None and b is None:
                     pass
                 else:
@@ -229,10 +242,10 @@ class ShapeDetector:
                     cl2 = ColorLabel(self.IW.image[b.y:b.y + b.h, b.x:b.x + b.w], b.w, b.h)
                     color2 = cl2.label()
                     GU.draw_train_status(self.IW.output_image, str(self.trains[color2]) + ", " + color2)
-
+                    output["train"] = self.trains[color2]
             if platforms is True or depot is True:
                 #check triangles
-                a, b = self.check_cws_array_ratios(array_of_contours, 8.5, 0.5)
+                a, b = self.check_cws_array_ratios(array_of_contours, 8.5, 1)
                 if a is None and b is None:
                     pass
                 else:
@@ -246,13 +259,15 @@ class ShapeDetector:
                             GU.draw_contour(self.IW.output_image, a.approx)
                             GU.draw_contour(self.IW.output_image, b.approx)
                             GU.draw_crosshair(self.IW.output_image, self.shape)
+                            output["platform"] = self.stations[color2]
                     if depot is True:
                         if color2 is "red":
                             GU.draw_station_status(self.IW.output_image, self.stations[color2] + ", " + color2)
                             GU.draw_contour(self.IW.output_image, a.approx)
                             GU.draw_contour(self.IW.output_image, b.approx)
                             GU.draw_crosshair(self.IW.output_image, self.shape)
-        pass
+                            output["platform"] = self.stations[color2]
+        return output
 
     def add_cw_to_similarity_array(self, cnts_array, CW):
         for cnt in cnts_array:
@@ -289,7 +304,7 @@ class ShapeDetector:
 #EXAMPLE OF USAGE BELOW, DELETE WHILE INTERGRATING WITH WHOLE PROJECT
 
 def video():
-    cap = cv2.VideoCapture('../shapes/biale_przejazd_z_znacznikami.avi')#('../shapes/biale_przejazd_bez_pociagow.avi')#('../shapes/biale_przejazd_z_znacznikami.avi')
+    cap = cv2.VideoCapture('../shapes/z_pocigami_2.avi')#('../shapes/biale_przejazd_bez_pociagow.avi')#('../shapes/biale_przejazd_z_znacznikami.avi')
     while cap.isOpened():
         ret, frame = cap.read()
 
@@ -300,13 +315,11 @@ def video():
         #example of usage
         shape = ShapeDetector(frame)
         shape.detect_depot()
-        #shape.detect_trains()
+        shape.detect_trains()
         shape.detect_platforms()
 
-
-
         cv2.imshow('frameOUT', shape.IW.output_image)
-
+        cv2.imshow('frameOUT2', shape.IW.edged)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     cap.release()
