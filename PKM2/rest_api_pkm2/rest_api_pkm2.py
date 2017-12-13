@@ -5,6 +5,8 @@ import flask
 import json
 from camera import Camera
 from Detection import Detection
+#import stream
+
 import cv2
 app = Flask(__name__)
 
@@ -25,6 +27,8 @@ class Algorithms:
         self.algorithms = {"movement" : "False", "depot" : "False", "station" : "False", "obstacles": "False", "hand" : "False", "face" : "False", "banana" : "False"}
         self.log_output_table = {'type': [u'movement', u'depot', u'station', u'obstacles', u'hand', u'face', u'banana'],
                                  'launched': [u"False", u"False", u"False", u"False", u"False", u"False", u"False"]}
+        self.tracks = []
+
 
 
 
@@ -38,6 +42,21 @@ class Algorithms:
         self.algorithms["face"] = data['face']
         self.algorithms["banana"] = data['banana']
 
+
+    def set_tracks(self, data):
+        data = request.json
+        temp = []
+
+        for row in data:
+            temp.append(row)
+            print(row)
+        self.tracks = temp
+
+        #for i in range(0,len(data))
+
+    def get_tracks(self):
+        json_data = jsonify(alg.tracks)
+        return json_data
 
 
     def get_algorithms(self):
@@ -71,6 +90,13 @@ class Algorithms:
         log_data = zip(self.log_output_table['type'], self.log_output_table['launched'])
         return log_data
 
+    def get_tracks_zip_format_data(self):
+
+        self.log_output_table['type'] = self.algorithms.keys()
+        self.log_output_table['launched'] = self.algorithms.values()
+        log_data = zip(self.log_output_table['type'], self.log_output_table['launched'])
+        return log_data
+
 
 
 
@@ -89,6 +115,24 @@ def logs():
 
     log_data = alg.get_log_zip_format_data()
     return render_template('logs.html',log_data=log_data)
+
+@app.route('/tracks', methods = ['GET', 'POST'] )
+def tracks():
+    #save logs as a html structure to a text file
+    #alg.dict_to_text_file()
+
+    return render_template('tracks.html',data=alg.tracks)
+
+@app.route('/tracks/set_tracks', methods = ['POST'] )
+def logs_set_tracks():
+    if not request.json:
+        abort(400)
+        output_data = alg.get_tracks()
+        return output_data
+    data = request.get_json()
+    alg.set_tracks(data)
+    output_data = alg.get_tracks()
+    return output_data
 
 @app.route('/logs/get_algorithms', methods = ['GET'] )
 def logs_get_algorithms():
@@ -112,9 +156,43 @@ def gen(camera):
     while True:
         ################################ choose your camera man #####################################
 
-        #frame = camera.get_frame_aiball() # <-- ai-ball camera ()
-        frame = camera.get_frame_webcam() # <-- personal computer camera
+        frame = camera.get_frame_aiball() # <-- ai-ball camera ()
+        #frame = camera.get_frame_webcam() # <-- personal computer camera
 
+        # Achtung!
+        frame = detection.detect_choosen_objects(frame, alg.algorithms)
+
+
+        # Convert frame to format in which is it able to be displayed on a RestApi
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        frame_out = jpeg.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_out + b'\r\n\r\n')
+
+# Recorded
+def gen_recorded():
+    try:
+        cap = cv2.VideoCapture('C:\\Users\\ISAlab\\Desktop\\PKM2.2\\PKM2\\rest_api_pkm2\\FILMY\\bez_pociagow.avi')
+    except:
+        print("NOT FOUND")
+
+    print("+++")
+    while True:
+        ################################ choose your camera man #####################################
+
+        ret, frame = cap.read()
+        if ret == True:
+
+            # Display the resulting frame
+            #cv2.imshow('Frame', frame)
+
+            # Press Q on keyboard to  exit
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                break
+
+        # Break the loop
+        else:
+            break
         # Achtung!
         frame = detection.detect_choosen_objects(frame, alg.algorithms)
 
@@ -130,13 +208,21 @@ def get_stream():
     return Response(gen(Camera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/get_recorded')
+def get_recorded():
+    return Response(gen_recorded(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 @app.route('/stream')
 def stream():
     return render_template('stream.html')
 
+@app.route('/recorded')
+def recorded():
+    return render_template('recorded.html')
 
 if __name__ == "__main__":
     alg = Algorithms()
     detection = Detection()
-    app.run(port=5000, threaded=True)
+    app.run(host='0.0.0.0',port=5000, threaded=True)

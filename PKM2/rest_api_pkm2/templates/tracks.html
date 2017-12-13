@@ -1,0 +1,15 @@
+{%extends 'layout.html' %}
+
+{% block body %}
+<div class="main-container" style="text-align: center;">
+          <div>
+            <h1>PKMII - RestApi</h1>
+              <p class="lead"> Tracks</p>
+             {% for row in data %}
+                <tr>
+                    <td><font color="blue">{{ row|tojson|safe }}</font></td>
+                </tr>
+             {% endfor %}
+            </div>
+</div>
+{% endblock  %}

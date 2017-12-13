@@ -302,34 +302,34 @@ class ShapeDetector:
 ##################################################################
 ##################################################################
 #EXAMPLE OF USAGE BELOW, DELETE WHILE INTERGRATING WITH WHOLE PROJECT
-
-def video():
-    cap = cv2.VideoCapture('C:\\Users\\ISAlab\\Desktop\\PKM2.2\\PKM2\\rest_api_pkm2\\FILMY\\bez_pociagow.avi')#('../shapes/biale_przejazd_bez_pociagow.avi')#('../shapes/biale_przejazd_z_znacznikami.avi')
-    while cap.isOpened():
-        ret, frame = cap.read()
-
-        if not ret:
-            break
-
-
-        #example of usage
-        shape = ShapeDetector(frame)
-        shape.detect_depot()
-        shape.detect_trains()
-        shape.detect_platforms()
-
-        cv2.imshow('frameOUT', shape.IW.output_image)
-        cv2.imshow('frameOUT2', shape.IW.edged)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    cap.release()
-    cv2.destroyAllWindows()
-    pass
-
-
-def main():
-    video()
-    pass
-
-if __name__ == "__main__":
-    main()
+#
+# def video():
+#     cap = cv2.VideoCapture('../shapes/z_pocigami_2.avi')#('../shapes/biale_przejazd_bez_pociagow.avi')#('../shapes/biale_przejazd_z_znacznikami.avi')
+#     while cap.isOpened():
+#         ret, frame = cap.read()
+#
+#         if not ret:
+#             break
+#
+#
+#         #example of usage
+#         shape = ShapeDetector(frame)
+#         shape.detect_depot()
+#         shape.detect_trains()
+#         shape.detect_platforms()
+#
+#         cv2.imshow('frameOUT', shape.IW.output_image)
+#         cv2.imshow('frameOUT2', shape.IW.edged)
+#         if cv2.waitKey(1) & 0xFF == ord('q'):
+#             break
+#     cap.release()
+#     cv2.destroyAllWindows()
+#     pass
+#
+#
+# def main():
+#     video()
+#     pass
+#
+# if __name__ == "__main__":
+#     main()

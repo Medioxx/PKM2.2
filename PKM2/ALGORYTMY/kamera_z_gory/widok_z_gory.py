@@ -3,31 +3,27 @@ import matplotlib.pyplot as plt
 from peakdetect import *
 from kmeans import *
 import os, json
+import numpy as np
+import requests
+from scipy.cluster.vq import kmeans, whiten
 
-refresh_rate = 20 #czestotliwosc sprawdzania zajetosci torow
+refresh_rate = 40 #czestotliwosc sprawdzania zajetosci torow
 delta = 20
 lines_ratio = 0.8
 
+url_get = 'http://127.0.0.1:5000/tracks/get_tracks'
+url_set = 'http://127.0.0.1:5000/tracks/set_tracks'
+
 def save_to_json(data,path):
     try:
         with open(path + "/top_camera.json", "w") as top_camera_file:
             top_camera_file.write(json.dumps(data))
+            requests.post(url_set, json=data)
     except OSError as err:
         print("Failed to save configuration: {0}".format(err))
 
     return True
 
-
-def save_to_json(data,path):
-    try:
-        print("Saving configuration...")
-        with open(path + "/top_camera.json", "w") as top_camera_file:
-            top_camera_file.write(json.dumps(data))
-        print("Configuration saved.")
-    except OSError as err:
-        print("Failed to save configuration: {0}".format(err))
-
-    return True
 
 def group_lines(lines):
     for line in lines:
@@ -39,10 +35,15 @@ def group_lines(lines):
 def find_rails(lines):
     #wyszukiwanie wiekszych skupisk linii, czyli potencjalnych torow
     max, _ = peakdet(group_lines(lines), delta)
-    max = np.asarray(max)
+    max = list(max)
+    # max = np.asarray(max)
+
+    # max = whiten(max)
 
     #odfiltrowanie skupisk linii, ktore nie sa torami
     mu, clusters  = find_centers(max,2)
+
+    # mu, clusters = kmeans(max,2)
 
     if(clusters[0][0][1] > clusters[1][0][1]):
         cluster = 0
@@ -54,6 +55,7 @@ def find_rails(lines):
         plt.plot(clusters[cluster][i][0],clusters[cluster][i][1], "x")
 
     plt.show()
+
     return clusters[cluster]
 
 
@@ -115,13 +117,14 @@ def zajetosc_torow(counter, clusters):
 
 path = os.getcwd() + "\streams\\"
 filename = "5.avi"
-video = cv2.VideoCapture(path + filename)
+# video = cv2.VideoCapture(path + filename)
+video = cv2.VideoCapture('rtsp://admin:DoTestowania@172.20.16.106/profile1/media.smp')
 
 grouped = [0] * 100
 clusters = []
 counter = 0
 
-while(1):
+while(True):
     _, frame = video.read()
 
     counter, clusters = zajetosc_torow(counter, clusters)

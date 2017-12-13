@@ -10,6 +10,7 @@ from PyQt5.QtCore import *
 import threading
 import requests
 import json
+from stream import Cam
 
 # To remove in final step
 tel = {'peron': False, 'zajezdnia': False, 'reka': False, 'przeszkody': False, "czerwony": False, 'twarz': False,
@@ -29,7 +30,7 @@ class Okno(QMainWindow):
         self.skutecznosc_load()
         self.ui.button_stream_start.clicked.connect(self.stream_start)
         # self.ui.button_nagranie_start.clicked.connect(self.send_json)
-        # self.ui.button_nagranie_start.clicked.connect(self.nagranie_start)
+        self.ui.button_nagranie_start.clicked.connect(self.nagranie_start)
         self.ui.button_program_stop.clicked.connect(self.program_stop)
 
         self.ui.button_save_skutecznosc.clicked.connect(self.skutecznosc_save)
@@ -70,7 +71,7 @@ class Okno(QMainWindow):
 
         # Checkbox initialization
         self.set_checkboxes()
-        # self.interval()
+        self.interval()
 
         self.ui.button_skutecznosc_zajezdnia_dobrze.clicked.connect(self.zajezdnia_zwieksz_skutecznosc)
         self.ui.button_skutecznosc_zajezdnia_zle.clicked.connect(self.zajezdnia_zmniejsz_skutecznosc)
@@ -97,98 +98,23 @@ class Okno(QMainWindow):
         #   os.system("python obsluga_kalibratora.py ")
 
     def program_stop(self):
-        sys.exit()
+        #sys.exit()
+        sys.execfile()
 
     def stream_start(self):
-        filmOrCam = 2
-        print("\nStart detekcji na strumieniu: \n")
-
-        # To remove in final step
-        if self.ui.detekcja_zajezdnia_checkBox.isChecked():
-            tel['zajezdnia'] = True
-            print("Detekcja zajezdni aktywna")
-        else:
-            tel['zajezdnia'] = False
-
-        if self.ui.detekcja_perony_checkBox.isChecked():
-            tel['peron'] = True
-            print("Detekcja peronow aktywna")
-        else:
-            tel['peron'] = False
-
-        if self.ui.detekcja_przeszkody_checkBox.isChecked():
-            tel['przeszkody'] = True
-            print("Detekcja przeszkod aktywna")
-        else:
-            tel['przeszkody'] = False
-
-        if self.ui.detekcja_twarz_checkBox.isChecked():
-            tel['twarz'] = True
-            print("Detekcja twarzy aktywna")
-        else:
-            tel['twarz'] = False
-
-        if self.ui.detekcja_reka_checkBox.isChecked():
-            tel['reka'] = True
-            print("Detekcja ruchu reka aktywna")
-        else:
-            tel['reka'] = False
-
-        if self.ui.detekcja_ruch_checkBox.isChecked():
-            tel['ruch'] = True
-            print("Detekcja ruchu pociagu aktywna")
-        else:
-            tel['ruch'] = False
-
-        if self.ui.detekcja_banan_checkBox.isChecked():
-            tel['banan'] = True
-            print("Detekcja banana aktywna")
-        else:
-            tel['banan'] = False
-        # To remove in final step
-        os.system("python skryptRozdzielajacy.py " + str(3) + " czysty.avi " + str(tel))
+        ip = self.ui.nagranie_lineEdit_2.text()
+        url = 'http://' + ip + ':5000/get_stream'
+        print(url)
+        cam = Cam(url)
+        cam.start()
 
     def nagranie_start(self):
-        # self.wczytaj_plik()
-        text = self.ui.nagranie_lineEdit.text()
-        text2 = " " + text + " "
-        # text2= self.wczytaj_plik()
-        print(text2)
-        filmOrCam = 1
-        print("\nStart detekcji na nagraniu: \n")
-
-        # To remove in final step
-        if self.ui.detekcja_zajezdnia_checkBox.isChecked():
-            tel['zajezdnia'] = True
-            print("Detekcja zajezdni aktywna")
-
-        if self.ui.detekcja_perony_checkBox.isChecked():
-            tel['peron'] = True
-            print("Detekcja peronow aktywna")
-
-        if self.ui.detekcja_przeszkody_checkBox.isChecked():
-            tel['przeszkody'] = True
-            print("Detekcja przeszkod aktywna")
-
-        if self.ui.detekcja_twarz_checkBox.isChecked():
-            tel['twarz'] = True
-            print("Detekcja twarzy aktywna")
-
-        if self.ui.detekcja_reka_checkBox.isChecked():
-            tel['reka'] = True
-            print("Detekcja ruchu reka aktywna")
-
-        if self.ui.detekcja_ruch_checkBox.isChecked():
-            tel['ruch'] = True
-            print("Detekcja ruchu pociagu aktywna")
-
-        if self.ui.detekcja_banan_checkBox.isChecked():
-            tel['banan'] = True
-            print("Detekcja banana aktywna")
-
-        # To remove in final step
-        os.system("python skryptRozdzielajacy.py " + str(filmOrCam) + text2 + str(tel))
-        print(tel)
+        ip = self.ui.nagranie_lineEdit.text()
+        url = 'http://'+ip+':5000/get_recorded'
+        print(url)
+        #url = 'http://192.168.43.229:5000/get_recorded'
+        cam = Cam(url)
+        cam.start()
 
     # To remove in final step??????
     def wczytaj_plik(self):

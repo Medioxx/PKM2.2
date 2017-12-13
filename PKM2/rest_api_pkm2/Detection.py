@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from marker_detector import ShapeDetector
 ##################################
 # 1.wykrywanie ruchu             #
 # 2.wykrywanie zajezdni          #
@@ -54,8 +55,15 @@ class Detection(object):
         if choosenAlgrithms["movement"] == "True":
             pass
         if choosenAlgrithms["depot"] == "True":
+            shape_detector = ShapeDetector(frame)
+            shape_detector.detect_depot()
+            frame = shape_detector.IW.output_image
+            #frame = shape_detector.IW.edged
             pass
         if choosenAlgrithms["station"] == "True":
+            shape_detector = ShapeDetector(frame)
+            shape_detector.detect_platforms()
+            frame = shape_detector.IW.output_image
             pass
         if choosenAlgrithms["obstacles"] == "True":
             pass
