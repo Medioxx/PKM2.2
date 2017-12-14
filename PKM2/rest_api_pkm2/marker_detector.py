@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 import imutils
 from imutils import contours
-import math
 import copy
 
 

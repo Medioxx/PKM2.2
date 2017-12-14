@@ -15,8 +15,8 @@ class Camera(object):
         # If you decide to use video.mp4, you must have this file in the folder
         # as the main.py.
         # self.video = cv2.VideoCapture('video.mp4')
-        self.url = 'http://192.168.2.1/?action=stream'
-        self.stream = requests.get(self.url, stream=True)
+        #self.url = 'http://192.168.2.1/?action=stream'
+        #self.stream = requests.get(self.url, stream=True)
         self.thread_cancelled = False
         #self.thread = Thread(target=self.run)
 

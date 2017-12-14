@@ -1,11 +1,9 @@
 from flask import Flask, render_template,jsonify, Response, request, abort
+import os.path
 import subprocess
-import time
-import flask
-import json
 from camera import Camera
 from Detection import Detection
-#import stream
+
 
 import cv2
 app = Flask(__name__)
@@ -24,10 +22,15 @@ app = Flask(__name__)
 class Algorithms:
     def __init__(self):
         # face, bananas, tracks
-        self.algorithms = {"movement" : "False", "depot" : "False", "station" : "False", "obstacles": "False", "hand" : "False", "face" : "False", "banana" : "False"}
-        self.log_output_table = {'type': [u'movement', u'depot', u'station', u'obstacles', u'hand', u'face', u'banana'],
+        self.algorithms = {"movement" : "False", "depot" : "False", "station" : "False", "obstacles": "False", "hand" : "False", "face" : "False", "train" : "False"}
+        self.log_output_table = {'type': [u'movement', u'depot', u'station', u'obstacles', u'hand', u'face', u'train'],
                                  'launched': [u"False", u"False", u"False", u"False", u"False", u"False", u"False"]}
         self.tracks = []
+        self.counter_proste = 0
+        self.counter_widac_tory = 0
+
+        self.neural = False
+
 
 
 
@@ -40,7 +43,7 @@ class Algorithms:
         self.algorithms["obstacles"] = data['obstacles']
         self.algorithms["hand"] = data['hand']
         self.algorithms["face"] = data['face']
-        self.algorithms["banana"] = data['banana']
+        self.algorithms["train"] = data['train']
 
 
     def set_tracks(self, data):
@@ -156,8 +159,8 @@ def gen(camera):
     while True:
         ################################ choose your camera man #####################################
 
-        frame = camera.get_frame_aiball() # <-- ai-ball camera ()
-        #frame = camera.get_frame_webcam() # <-- personal computer camera
+        #frame = camera.get_frame_aiball() # <-- ai-ball camera ()
+        frame = camera.get_frame_webcam() # <-- personal computer camera
 
         # Achtung!
         frame = detection.detect_choosen_objects(frame, alg.algorithms)
@@ -171,8 +174,10 @@ def gen(camera):
 
 # Recorded
 def gen_recorded():
+    path=os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\FILMY'
+    path += '\\bez_pociagow.avi'
     try:
-        cap = cv2.VideoCapture('C:\\Users\\ISAlab\\Desktop\\PKM2.2\\PKM2\\rest_api_pkm2\\FILMY\\bez_pociagow.avi')
+        cap = cv2.VideoCapture(path)
     except:
         print("NOT FOUND")
 
@@ -200,6 +205,11 @@ def gen_recorded():
         # Convert frame to format in which is it able to be displayed on a RestApi
         ret, jpeg = cv2.imencode('.jpg', frame)
         frame_out = jpeg.tobytes()
+        if alg.neural == True:
+            path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\siec'+'\\frame.jpg'
+            cv2.imwrite(path, frame)
+            alg.neural = False
+
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_out + b'\r\n\r\n')
 
@@ -217,6 +227,21 @@ def get_recorded():
 @app.route('/stream')
 def stream():
     return render_template('stream.html')
+
+@app.route('/neural')
+def neural():
+    #tutaj nalezy podac sciezke do swojego pythona albo samego pythona jesli macie domyslnie ustawionego odpowiedniego dla naszego projektu
+    path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\siec' + '\\detect_train.py'
+    some_command = 'python %s' % path
+    #p = subprocess.Popen(some_command, stdout=subprocess.PIPE, shell=True)
+    #(output, err) = p.communicate()
+    #print(output)
+    return render_template('neural.html',frame = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\siec' +'\\frame.jpg')
+
+@app.route('/neural/set_frame')
+def neural_set_frame():
+    alg.neural = True
+    return "neural"
 
 @app.route('/recorded')
 def recorded():
