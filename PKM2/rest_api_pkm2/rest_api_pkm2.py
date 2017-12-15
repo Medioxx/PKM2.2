@@ -1,11 +1,14 @@
 from flask import Flask, render_template,jsonify, Response, request, abort
 import os.path
 import subprocess
+import time
 from camera import Camera
 from Detection import Detection
-
-
+from Sterowanie.ObjectsISA import *
+from Sterowanie.trainConnection import trainClient
 import cv2
+
+
 app = Flask(__name__)
 
 
@@ -100,6 +103,30 @@ class Algorithms:
         log_data = zip(self.log_output_table['type'], self.log_output_table['launched'])
         return log_data
 
+class SteerTrain():
+
+    def __init__(self):
+        self.trainDlg = trainClient()
+        self.train=Train(5)
+        self.train_properties={'velocity':0,'control':0}
+
+
+
+
+    def set_velocity(self, data):
+        data = request.json
+        self.train_properties["velocity"] = data['velocity']
+        self.train_properties["control"] = data['control']
+        print(self.train_properties)
+        try:
+            self.trainDlg.connect('127.0.0.1')
+            time.sleep(1)
+            self.trainDlg.sendMsg(self.train.changeVelocity(int(self.train_properties['velocity']),
+                                                          int(self.train_properties['control'])))
+            self.trainDlg.disconnect()
+            return "OK"
+        except:
+            return "NOK"
 
 
 
@@ -247,7 +274,20 @@ def neural_set_frame():
 def recorded():
     return render_template('recorded.html')
 
+
+@app.route('/train/set_speed', methods = ['POST'] )
+def train_set_speed():
+    if not request.json:
+        abort(400)
+        output_data = alg.get_tracks()
+        return output_data
+    data = request.get_json()
+    output_data=steerTrain.set_velocity(data)
+    return output_data
+
+
 if __name__ == "__main__":
     alg = Algorithms()
     detection = Detection()
+    steerTrain=SteerTrain()
     app.run(host='0.0.0.0',port=5000, threaded=True)

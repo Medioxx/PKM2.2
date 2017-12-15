@@ -19,9 +19,11 @@ class Okno(QMainWindow):
         # Commuinication
         self.algorithms = {"movement": "False", "depot": "False", "station": "False", "obstacles": "False",
                            "hand": "False", "face": "False", "train": "False"}
+        self.train_properties = {'velocity': 0, 'control': 0}
         self.url_get = 'http://127.0.0.1:5000/logs/get_algorithms'
         self.url_set = 'http://127.0.0.1:5000/logs/set_algorithms'
         self.neural = 'http://127.0.0.1:5000/neural/set_frame'
+        self.train_url='http://127.0.0.1:5000/train/set_speed'
 
         QMainWindow.__init__(self)
         self.ui = loadUi('PKM_GUI.ui', self)
@@ -34,9 +36,9 @@ class Okno(QMainWindow):
         self.ui.button_save_skutecznosc.clicked.connect(self.skutecznosc_save)
 
         #OBSLUGA RUCHU POCIAGIEM MARES @@@@@@
-        # self.ui.button_steruj_przod.clicked.connect(self.jedz_przod)
-        # self.ui.button_steruj_tyl.clicked.connect(self.jedz_tyl)
-        # self.ui.button_steruj_stop.clicked.connect(self.jedz_stop)
+        self.ui.button_steruj_przod.clicked.connect(self.jedz_przod)
+        self.ui.button_steruj_tyl.clicked.connect(self.jedz_tyl)
+        self.ui.button_steruj_stop.clicked.connect(self.jedz_stop)
 
 
         oImage = QImage("tlo.png")
@@ -133,6 +135,25 @@ class Okno(QMainWindow):
         return filename[0]
 
     ###################################### JSON Communication #######################################
+
+
+    def jedz_przod(self):
+        self.train_properties['velocity'] = 7
+        self.train_properties['control'] = 0
+        requests.post(self.train_url, json=self.train_properties)
+
+
+    def jedz_tyl(self):
+        self.train_properties['velocity'] = 7
+        self.train_properties['control'] = -1
+        requests.post(self.train_url, json=self.train_properties)
+
+
+    def jedz_stop(self):
+        self.train_properties['velocity'] = 0
+        self.train_properties['control'] = 0
+        requests.post(self.train_url, json=self.train_properties)
+
 
     # Method, which downloads current dictionary and applies it to local dictionary
     def get_algorithms(self):
