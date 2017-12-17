@@ -4,7 +4,7 @@ import numpy as np
 
 def przeszkody(frame,counter_proste,counter_widac_tory):
     # wycinamy fragment, na ktorym widac tory
-    subframe = frame[200:400, 150:350]
+    subframe = frame[300:500, 150:350]
 
     # konwertujemy BGR do HSV
     hsv = cv2.cvtColor(subframe, cv2.COLOR_BGR2HSV)
