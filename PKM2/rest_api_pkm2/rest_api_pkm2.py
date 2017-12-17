@@ -1,4 +1,4 @@
-from flask import Flask, render_template,jsonify, Response, request, abort
+from flask import Flask, render_template,jsonify, Response, request, abort, redirect ,url_for
 import os.path
 import subprocess
 import time
@@ -128,6 +128,26 @@ class SteerTrain():
         except:
             return "NOK"
 
+class Movie():
+
+    def __init__(self):
+        self.path = path=os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\FILMY'
+        self.movieDict = []
+        self.get_movies()
+        self.movie = self.movieDict[0]
+
+
+
+    def get_movies(self):
+        self.movieDict = []
+        for file in os.listdir(self.path):
+            if file.endswith(".avi"):
+                self.movieDict.append(file)
+        return self.movieDict
+
+    def set_movie(self,movie):
+        self.movie = movie
+
 
 
 @app.route('/')
@@ -144,7 +164,16 @@ def logs():
     alg.dict_to_text_file()
 
     log_data = alg.get_log_zip_format_data()
-    return render_template('logs.html',log_data=log_data)
+    movie_data = movies.get_movies()
+    return render_template('logs.html',log_data=log_data,movie_data = movie_data)
+
+@app.route('/update_movie', methods = ['POST'] )
+def update_movie():
+    if request.method == 'POST':
+        movie = request.form['movies']
+        movies.set_movie(movie)
+        return redirect(url_for('recorded'))
+    return "test"
 
 @app.route('/tracks', methods = ['GET', 'POST'] )
 def tracks():
@@ -201,14 +230,12 @@ def gen(camera):
 
 # Recorded
 def gen_recorded():
-    path=os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\FILMY'
-    path += '\\bez_pociagow.avi'
+    path=movies.path + '\\' + movies.movie
     try:
         cap = cv2.VideoCapture(path)
     except:
         print("NOT FOUND")
 
-    print("+++")
     while True:
         ################################ choose your camera man #####################################
 
@@ -272,7 +299,7 @@ def neural_set_frame():
 
 @app.route('/recorded')
 def recorded():
-    return render_template('recorded.html')
+    return render_template('recorded.html',movie = movies.movie)
 
 
 @app.route('/train/set_speed', methods = ['POST'] )
@@ -290,4 +317,5 @@ if __name__ == "__main__":
     alg = Algorithms()
     detection = Detection()
     steerTrain=SteerTrain()
+    movies = Movie()
     app.run(host='0.0.0.0',port=5000, threaded=True)
