@@ -34,6 +34,8 @@ class Okno(QMainWindow):
         self.ui.button_program_stop.clicked.connect(self.program_stop)
         self.ui.button_siec.clicked.connect(self.set_neural)
         self.ui.button_save_skutecznosc.clicked.connect(self.skutecznosc_save)
+        
+        self.ui.predkosc_slider.valueChanged.connect(self.predkosc_changed)
 
         #OBSLUGA RUCHU POCIAGIEM MARES @@@@@@
         self.ui.button_steruj_przod.clicked.connect(self.jedz_przod)
@@ -42,7 +44,7 @@ class Okno(QMainWindow):
 
 
         oImage = QImage("tlo.png")
-        sImage = oImage.scaled(653, 493)
+        sImage = oImage.scaled(650, 490)
         # sImage = oImage.scaled(QSize(440,440))
         palette = QPalette()
         palette.setBrush(10, QBrush(sImage))
@@ -103,6 +105,11 @@ class Okno(QMainWindow):
 
         # def kalibruj_start(self):
         #   os.system("python obsluga_kalibratora.py ")
+      
+    def predkosc_changed(self):
+        predkosc = self.predkosc_slider.value()
+        #print(predkosc)
+    pass
 
     def set_neural(self):
         requests.get(self.neural)
