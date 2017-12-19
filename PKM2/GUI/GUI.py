@@ -55,7 +55,7 @@ class Okno(QMainWindow):
         self.ui.label_5.setStyleSheet('QLabel {color: white}')
         self.ui.label_3.setStyleSheet('QLabel {color: white}')
         self.ui.label_4.setStyleSheet('QLabel {color: white}')
-        self.ui.label_6.setStyleSheet('QLabel {color: white}')
+        self.ui.predkosc_slider.setStyleSheet('QLabel {color: white}')
 
         self.ui.detekcja_zajezdnia_checkBox.setStyleSheet('QCheckBox {color: white}')
         self.ui.detekcja_zajezdnia_checkBox.stateChanged.connect(self.send_zajezdnia_json)
@@ -145,13 +145,13 @@ class Okno(QMainWindow):
 
 
     def jedz_przod(self):
-        self.train_properties['velocity'] = 7
+        self.train_properties['velocity'] = self.predkosc_slider.value()
         self.train_properties['control'] = 0
         requests.post(self.train_url, json=self.train_properties)
 
 
     def jedz_tyl(self):
-        self.train_properties['velocity'] = 7
+        self.train_properties['velocity'] = self.predkosc_slider.value()
         self.train_properties['control'] = -1
         requests.post(self.train_url, json=self.train_properties)
 
