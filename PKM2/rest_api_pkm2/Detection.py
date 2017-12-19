@@ -38,7 +38,7 @@ class Detection(object):
         track_window = (r, a, c, b)
         x, y, w, h, = 100, 100, 400, 400
         # !
-        frames = cv2.imread('frame.jpg')
+        frames = cv2.imread('ramka.jpg')
         obrazDloni = frames[y:y + h, x:x + w]
         # Dobor odpowiedniej maski filtrujaca nasza dlon z niepotrzebnych elementow
         dlonHsv = cv2.cvtColor(obrazDloni, cv2.COLOR_BGR2HSV)
