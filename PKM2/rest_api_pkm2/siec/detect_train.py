@@ -12,16 +12,31 @@ def load_model():
     json_file.close()
     model = model_from_json(loaded_model_json)
     model.load_weights(weights_path)
-    return model
+
+    model_path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\stacja.json'
+    weights_path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\stacja.h5'
+
+    json_file = open(model_path, 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    station_model = model_from_json(loaded_model_json)
+    station_model.load_weights(weights_path)
+    return model, station_model
 
 
-def detect_train(img, model):
+def detect_train(img, model, station_model):
     """
     output:
     0 - nothing
     1 - train blue square
     2 - train green square
     3 - train red square
+
+    output_station:
+    0 - nothig
+    1 - kielpinek
+    2 - strzyza
+    3 - zajezdnia
      :param images:  array of images with single digit
      :return:int, number from single cell from scans
      """
@@ -38,20 +53,25 @@ def detect_train(img, model):
     
     grey_x = grey_x.reshape(input_shape) / 255
     pred_value = model.predict(grey_x, batch_size=1, verbose=0)
-    pred_train = np.argmax(pred_value)
+    pred_value_station = model.predict(grey_x, batch_size=1, verbose=0)
 
-    return pred_train
+    pred_train = np.argmax(pred_value)
+    pred_station = np.argmax(pred_value_station)
+
+    return pred_train, pred_station
 
 
 if __name__ == '__main__':
-    model = load_model()
+    model, station_model = load_model()
     # Capture frame-by-frame
     frame = cv2.imread('frame.jpg')
 
     # Our operations on the frame come here
-    detected = detect_train(frame,model)
+    detected, pred_station = detect_train(frame, model, station_model)
     # Display the resulting frame
     obj = open('output.txt', 'w')
-    obj.write(str(detected))
+    obj.write(str(detected) + '\n')
+    obj.write(str(pred_station))
+
     obj.close
 
