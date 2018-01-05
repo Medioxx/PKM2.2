@@ -7,9 +7,15 @@ from Detection import Detection
 from Sterowanie.ObjectsISA import *
 from Sterowanie.trainConnection import trainClient
 import cv2
+from flask import make_response
+from functools import wraps, update_wrapper
+from datetime import datetime
 
 
 app = Flask(__name__)
+
+
+#route ADD 192.168.2.0 MASK 255.255.255.0 192.168.2.1   do podlaczenia do dwowch sieci
 
 
 
@@ -33,6 +39,7 @@ class Algorithms:
         self.counter_widac_tory = 0
 
         self.neural = False
+        self.frame_neural = 1
 
 
 
@@ -52,7 +59,7 @@ class Algorithms:
     def set_tracks(self, data):
         data = request.json
         temp = []
-
+        print(data)
         for row in data:
             temp.append(row)
             print(row)
@@ -134,7 +141,10 @@ class Movie():
         self.path = path=os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\FILMY'
         self.movieDict = []
         self.get_movies()
-        self.movie = self.movieDict[0]
+        if len(self.movieDict)==0:
+            self.movie = None
+        else:
+            self.movie = self.movieDict[0]
 
 
 
@@ -148,6 +158,19 @@ class Movie():
     def set_movie(self,movie):
         self.movie = movie
 
+
+
+def nocache(view):
+    @wraps(view)
+    def no_cache(*args, **kwargs):
+        response = make_response(view(*args, **kwargs))
+        response.headers['Last-Modified'] = datetime.now()
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '-1'
+        return response
+
+    return update_wrapper(no_cache, view)
 
 
 @app.route('/')
@@ -185,6 +208,7 @@ def tracks():
 @app.route('/tracks/set_tracks', methods = ['POST'] )
 def logs_set_tracks():
     if not request.json:
+        alg.set_tracks([])
         abort(400)
         output_data = alg.get_tracks()
         return output_data
@@ -215,12 +239,10 @@ def gen(camera):
     while True:
         ################################ choose your camera man #####################################
 
-        #frame = camera.get_frame_aiball() # <-- ai-ball camera ()
-        frame = camera.get_frame_webcam() # <-- personal computer camera
-
+        frame = camera.get_frame_aiball() # <-- ai-ball camera ()
+        #frame = camera.get_frame_webcam() # <-- personal computer camera
         # Achtung!
         frame = detection.detect_choosen_objects(frame, alg.algorithms)
-
 
         # Convert frame to format in which is it able to be displayed on a RestApi
         ret, jpeg = cv2.imencode('.jpg', frame)
@@ -260,7 +282,9 @@ def gen_recorded():
         ret, jpeg = cv2.imencode('.jpg', frame)
         frame_out = jpeg.tobytes()
         if alg.neural == True:
-            path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\siec'+'\\frame.jpg'
+            alg.frame_neural+=1
+            path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\static'+'\\frame'\
+                   +str(alg.frame_neural) +'.jpg'
             cv2.imwrite(path, frame)
             alg.neural = False
 
@@ -283,14 +307,41 @@ def stream():
     return render_template('stream.html')
 
 @app.route('/neural')
+@nocache
 def neural():
     #tutaj nalezy podac sciezke do swojego pythona albo samego pythona jesli macie domyslnie ustawionego odpowiedniego dla naszego projektu
-    path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\siec' + '\\detect_train.py'
-    some_command = 'python %s' % path
-    #p = subprocess.Popen(some_command, stdout=subprocess.PIPE, shell=True)
-    #(output, err) = p.communicate()
-    #print(output)
-    return render_template('neural.html',frame = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\siec' +'\\frame.jpg')
+    path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))
+    absolute_path = path + '\\siec' + '\\detect_train.py' + '\\frame'\
+                   +str(alg.frame_neural) +'.jpg'
+    python = 'C:\\Users\\ISAlab\\Anaconda3\\python.exe'
+    some_command = '%s %s' % (python,absolute_path)
+    p = subprocess.Popen(some_command, stdout=subprocess.PIPE, shell=True)
+    (output, err) = p.communicate()
+    file_path = path+ '\\siec' + '\\output.txt'
+    with open(file_path) as f:
+        content = f.readlines()
+            # you may also want to remove whitespace characters like `\n` at the end of each line
+    content = [x.strip() for x in content]
+    print(int(content[1]))
+    print(int(content[0]))
+    station = "Nothing"
+    if int(content[1]) == 1:
+        station = "Kelpinek"
+    elif int(content[1]) == 2:
+        station = "Strzyza"
+    elif int(content[1]) == 3:
+        station = "Zajezdnia"
+
+    train = "Nothing"
+    if int(content[0]) == 1:
+        train = "blue square"
+    elif int(content[0]) == 2:
+        train = "green square"
+    elif int(content[0]) == 3:
+        train = "red square"
+
+    return render_template('neural.html',station=station,train=train,frame='frame'\
+                   +str(alg.frame_neural) +'.jpg')
 
 @app.route('/neural/set_frame')
 def neural_set_frame():

@@ -15,9 +15,10 @@ class Camera(object):
         # If you decide to use video.mp4, you must have this file in the folder
         # as the main.py.
         # self.video = cv2.VideoCapture('video.mp4')
-        #self.url = 'http://192.168.2.1/?action=stream'
-        #self.stream = requests.get(self.url, stream=True)
+        self.url = 'http://192.168.2.1/?action=stream'
+        self.stream = requests.get(self.url, stream=True)
         self.thread_cancelled = False
+        self.out = cv2.VideoCapture(self.url)
         #self.thread = Thread(target=self.run)
 
     def __del__(self):
@@ -26,13 +27,18 @@ class Camera(object):
     def get_frame_aiball(self):
         bytes = b''
         #fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        #out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
-        bytes += self.stream.raw.read(1024)
-        a = bytes.find(b'\xff\xd8')
-        b = bytes.find(b'\xff\xd9')
-        jpg = bytes[a:b + 2]
-        bytes = bytes[b + 2:]
-        frame = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+
+        #bytes += self.stream.raw.read(1024)
+        _, frame = self.out.read()
+        #a = bytes.find(b'\xff\xd8')
+        #b = bytes.find(b'\xff\xd9')
+        #print(a)
+        #print(b)
+        #bytes = bytes[b + 2:]
+        #jpg = bytes[a:b + 2]
+        #print(bytes)
+        #if b != -1:
+         #   frame = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
         #------------------ insert algorythms HERE ------------------
         # Display the resulting frame
         #out.write(frame)
