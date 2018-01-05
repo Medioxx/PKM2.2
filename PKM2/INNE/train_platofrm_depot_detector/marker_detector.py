@@ -304,7 +304,7 @@ class ShapeDetector:
 #EXAMPLE OF USAGE BELOW, DELETE WHILE INTERGRATING WITH WHOLE PROJECT
 
 def video():
-    cap = cv2.VideoCapture('../shapes/z_pocigami_2.avi')#('../shapes/biale_przejazd_bez_pociagow.avi')#('../shapes/biale_przejazd_z_znacznikami.avi')
+    cap = cv2.VideoCapture('C:\\Users\\ISAlab\\Desktop\\PKM2.2\\PKM2\\rest_api_pkm2\\FILMY\\bez_pociagow.avi')#('../shapes/biale_przejazd_bez_pociagow.avi')#('../shapes/biale_przejazd_z_znacznikami.avi')
     while cap.isOpened():
         ret, frame = cap.read()
 

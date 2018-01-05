@@ -1,0 +1,16 @@
+{%extends 'layout.html' %}
+
+{% block body %}
+<meta http-equiv="refresh" content="1">
+<div class="main-container" style="text-align: center;">
+          <div>
+            <h1>PKMII - RestApi</h1>
+              <p class="lead"> Tracks</p>
+             {% for row in data %}
+                <tr>
+                    <td><font color="blue">{{ row|tojson|safe }}</font></td>
+                </tr>
+             {% endfor %}
+            </div>
+</div>
+{% endblock  %}

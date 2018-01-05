@@ -1,0 +1,15 @@
+{%extends 'layout.html' %}
+
+{% block body %}
+<div class="main-container" style="text-align: center;">
+          <div>
+            <h1>PKMII - RestApi</h1>
+              <p class="lead"> Neural Network</p>
+              <p class="lead"><br/>Train detection: {{ train }} </p>
+              <p class="lead">Station detection: {{ station }} <br/></p>
+              <img src=static\{{ frame }} alt="Frame">
+            <br/>
+              <br/>
+          </div>
+</div>
+{% endblock  %}
