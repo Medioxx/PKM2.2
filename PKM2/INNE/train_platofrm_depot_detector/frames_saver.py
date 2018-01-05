@@ -3,6 +3,21 @@ import cv2
 from marker_detector import ShapeDetector
 
 class frames_saver:
+	'''
+	Opis:Klasa zapisujaca klatki z nagrania, rozdzielajaca 	
+		zapisane klatki do poszczolegonych folderow w zaleznosci od tego co zostalo wykryte (perony, zajezdnia lub pociagi).
+	
+	Pola klasy:
+        prefix    - nazwa glownego folderu z zapisanymi klatkami
+        negative  - klatki na ktorych nie ma peronu, zajezdni ani pocagu
+        train1    - folder do ktoego beda zapisane klatki, na ktorych widoczny jest pociag 1
+        train2    - folder do ktoego beda zapisane klatki, na ktorych widoczny jest pociag 2
+        train6    - folder do ktoego beda zapisane klatki, na ktorych widoczny jest pociag 3
+        depot     - folder do ktoego beda zapisane klatki, na ktorych widoczna jest zajezdnia
+        kielpinek - folder do ktoego beda zapisane klatki, na ktorych widoczna jest stacja kielpinek
+        strzyza   - folder do ktoego beda zapisane klatki, na ktorych widoczna jest stacja strzyza
+        frames_latch - liczba klatek, ktore beda jeszcze dalej zapisywane zaraz po wykrciu obiektu 
+	'''	
     def __init__(self):
         self.prefix    = "train_data/"
         self.negative  = "negative_data"
@@ -14,6 +29,10 @@ class frames_saver:
         self.strzyza   = "strzyza_data"
         self.frames_latch = 10
 
+	'''
+	Opis: Funkcja prywatna tworzaca folder
+	Zmienne wejściowe: nazwa folderu do utworzenia
+	'''
     def __create_dir(self, name):
 
         try:
@@ -21,10 +40,16 @@ class frames_saver:
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-
+	'''
+	Opis: Funkcja prywatna zapisujaca klatke
+	Zmienne wejściowe: nazwa folderu do utworzenia, unikalny index filmiku, numer klatki, klatka
+	'''
     def __save_frame(self, folder_name, movie_id, frame_number, frame):
         cv2.imwrite(self.prefix + folder_name + "/" + movie_id +  "_frame%d.jpg" % frame_number, frame)
-
+		
+	'''
+	Opis: Funkcja tworzaca wszysteki wymagane foldery
+	'''
     def create_dirs(self):
         self.__create_dir(self.negative)
         self.__create_dir(self.train1)
@@ -34,7 +59,11 @@ class frames_saver:
         self.__create_dir(self.kielpinek)
         self.__create_dir(self.strzyza)
         pass
-
+		
+	'''
+	Opis: Funkcja prywatna, decydujaca do jakiego folderu zapisac jaka klatke
+	Zmienne wejściowe: wynik z algorytmow(slownik), id filmiku, numer klatki, klatka
+	'''
     def __parse_dicts(self, dict__arr, movie_id, frame_number, frame):
         output = False
         train_nr = 0
@@ -69,6 +98,10 @@ class frames_saver:
             output = True
         return output
 
+	'''
+	Opis: Glowna funkcja przetwarzaca film
+	Zmienne wejściowe: sciezka do nagrania, unikalne id filmiku
+	'''
     def parse_video(self, path_to_movie, movie_id):
         cap = cv2.VideoCapture(path_to_movie) #'../shapes/z_pocigami_2.avi'
         frame_counter = 0;
