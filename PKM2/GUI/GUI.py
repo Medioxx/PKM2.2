@@ -16,6 +16,10 @@ from stream import Cam
 
 class Okno(QMainWindow):
     def __init__(self):
+        '''
+	    Opis: Obsługa okna GUI
+	    '''
+        
         # Commuinication
         self.algorithms = {"movement": "False", "depot": "False", "station": "False", "obstacles": "False",
                            "hand": "False", "face": "False", "train": "False"}
@@ -26,30 +30,36 @@ class Okno(QMainWindow):
         self.train_url='http://127.0.0.1:5000/train/set_speed'
 
         QMainWindow.__init__(self)
+        #Wczytujemy plik GUI zaprojektowany w QTDesigner
         self.ui = loadUi('PKM_GUI.ui', self)
+        #Wczytujemy skutecznosc
         self.skutecznosc_load()
+        #Obsluga przycisku start stream
         self.ui.button_stream_start.clicked.connect(self.stream_start)
-        # self.ui.button_nagranie_start.clicked.connect(self.send_json)
+        #Obsluga przycisku start nagranie
         self.ui.button_nagranie_start.clicked.connect(self.nagranie_start)
+        #Obsluga przycisku zamkniecia programu
         self.ui.button_program_stop.clicked.connect(self.program_stop)
+        #Obsluga przycisku uruchomienia sieci
         self.ui.button_siec.clicked.connect(self.set_neural)
-        self.ui.button_save_skutecznosc.clicked.connect(self.skutecznosc_save)
-        
+        #Obsluga przycisku zapisywania skutecznosci
+        self.ui.button_save_skutecznosc.clicked.connect(self.skutecznosc_save)    
+        #Obsluga suwaka zmieniajacego predkosc
         self.ui.predkosc_slider.valueChanged.connect(self.predkosc_changed)
 
-        #OBSLUGA RUCHU POCIAGIEM MARES @@@@@@
+        #OBSLUGA RUCHU POCIAGIEM
         self.ui.button_steruj_przod.clicked.connect(self.jedz_przod)
         self.ui.button_steruj_tyl.clicked.connect(self.jedz_tyl)
         self.ui.button_steruj_stop.clicked.connect(self.jedz_stop)
 
-
+        #Wczytujemy tło, zmieniamy wymiary pod rozmiar okna GUI
         oImage = QImage("tlo.png")
         sImage = oImage.scaled(650, 490)
-        # sImage = oImage.scaled(QSize(440,440))
         palette = QPalette()
         palette.setBrush(10, QBrush(sImage))
         self.setPalette(palette)
-
+    
+        #Zmiana stylu labelek na biały, ponieważ GUI ma czarne tło
         self.ui.label.setStyleSheet('QLabel {color: white}')
         self.ui.label_2.setStyleSheet('QLabel {color: white}')
         self.ui.label_5.setStyleSheet('QLabel {color: white}')
@@ -57,7 +67,9 @@ class Okno(QMainWindow):
         self.ui.label_4.setStyleSheet('QLabel {color: white}')
         self.ui.predkosc_slider.setStyleSheet('QLabel {color: white}')
 
+        #Zmiana czcionki na białą, ponieważ GUI ma czarne tło
         self.ui.detekcja_zajezdnia_checkBox.setStyleSheet('QCheckBox {color: white}')
+        #Wysylamy zmiane stanu checboxa
         self.ui.detekcja_zajezdnia_checkBox.stateChanged.connect(self.send_zajezdnia_json)
 
         self.ui.detekcja_przeszkody_checkBox.setStyleSheet('QCheckBox  {color: white}')
@@ -78,10 +90,11 @@ class Okno(QMainWindow):
         self.ui.detekcja_ruch_checkBox.setStyleSheet('QCheckBox  {color: white}')
         self.ui.detekcja_ruch_checkBox.stateChanged.connect(self.send_ruch_json)
 
-        # Checkbox initialization
+        # Checkbox initialization - wspolpraca z rest API
         self.set_checkboxes()
         self.interval()
-
+        
+        #Obsługi przycisków odpowiedzialnych za skuteczność dla danych obiektów
         self.ui.button_skutecznosc_zajezdnia_dobrze.clicked.connect(self.zajezdnia_zwieksz_skutecznosc)
         self.ui.button_skutecznosc_zajezdnia_zle.clicked.connect(self.zajezdnia_zmniejsz_skutecznosc)
 
@@ -102,23 +115,32 @@ class Okno(QMainWindow):
 
         self.ui.button_skutecznosc_ruch_dobrze.clicked.connect(self.ruch_zwieksz_skutecznosc)
         self.ui.button_skutecznosc_ruch_zle.clicked.connect(self.ruch_zmniejsz_skutecznosc)
-
-        # def kalibruj_start(self):
-        #   os.system("python obsluga_kalibratora.py ")
       
     def predkosc_changed(self):
+        '''
+	    Opis: Obłsługa slidera odpowiedzialnego za predkość pociągu
+	    '''
         predkosc = self.predkosc_slider.value()
         #print(predkosc)
     pass
 
     def set_neural(self):
+        '''
+	    Opis: Uruchomione sieci neuronowej
+	    '''
         requests.get(self.neural)
 
     def program_stop(self):
+        '''
+	    Opis: Zatrzymanie całego programu, uruchamiane przy wcisnieniu guzika OFF w GUI
+	    '''
         #sys.exit()
         sys.execfile()
 
     def stream_start(self):
+        '''
+	    Opis: Start streamu
+	    '''
         ip = self.ui.stream_lineEdit.text()
         url = 'http://' + ip + ':5000/get_stream'
         print(url)
@@ -126,6 +148,9 @@ class Okno(QMainWindow):
         cam.start()
 
     def nagranie_start(self):
+        '''
+	    Opis: Start nagrania
+	    '''
         ip = self.ui.nagranie_lineEdit.text()
         url = 'http://'+ip+':5000/get_recorded'
         print(url)
@@ -133,17 +158,11 @@ class Okno(QMainWindow):
         cam = Cam(url)
         cam.start()
 
-    # To remove in final step??????
-    def wczytaj_plik(self):
-        filename = QFileDialog.getOpenFileName(self, None, '',
-                                               'Media file(*.mp4 *.wmv *.avi *.3gp *.oog *.mpeg *.mp2 *.wma *.mp3)'
-                                               ';;All files(*.*)')
-        print(filename[0])
-        return filename[0]
-
     ###################################### JSON Communication #######################################
 
-
+        '''
+	    Opis: Obsluga ruchu pociągu
+	    '''
     def jedz_przod(self):
         self.train_properties['velocity'] = self.predkosc_slider.value()
         self.train_properties['control'] = 0
@@ -161,8 +180,9 @@ class Okno(QMainWindow):
         self.train_properties['control'] = 0
         requests.post(self.train_url, json=self.train_properties)
 
-
-    # Method, which downloads current dictionary and applies it to local dictionary
+     '''
+	 Opis: Method, which downloads current dictionary and applies it to local dictionary
+	 '''
     def get_algorithms(self):
         # get response from RestApi
         rest_api_response = requests.get(self.url_get)
@@ -178,6 +198,9 @@ class Okno(QMainWindow):
         self.algorithms["train"] = rest_api_dictionary['train']
 
     # Method which sends JSON to RestApi
+    '''
+	Opis: Wysyłanie do rest APi uruchamiania wykrywania obiektów
+	'''
     def set_algorithms(self):
         requests.post(self.url_set, json=self.algorithms)
 
@@ -239,6 +262,9 @@ class Okno(QMainWindow):
 
     #
     def set_checkboxes(self):
+        '''
+	    Opis: Ustawianie słownika wybranych algorytmów
+	    '''
         # First, download current dict from RestApi
         self.get_algorithms()
 
@@ -278,9 +304,18 @@ class Okno(QMainWindow):
             self.ui.detekcja_ruch_checkBox.setChecked(False)
 
     def interval(self):
+        '''
+	    Opis: Co sekundowe działanie zczytywania stanu checkboxow w komunikacji rest api
+	    '''
         threading.Timer(1.0, self.interval).start()
         self.set_checkboxes()
 
+        
+    ###### OBSŁUGA SKUTECZNOŚCI
+     '''
+	 Opis: Obsługa przycisków zwiekszajacych/zmniejszajacych skutecznosc, liczenie procentowe skutecznosci
+     Wyswietlanie na LCD w GUI
+	 '''
     #Zajezdnia skutecznosc
     def zajezdnia_zwieksz_skutecznosc(self):
         self.zajezdnia_dobrze += 1
@@ -422,6 +457,9 @@ class Okno(QMainWindow):
         pass
 
     def skutecznosc_save(self):
+        '''
+	    Opis: Zapisujemy skutecznosc do pliku json
+	    '''
         self.skutecznosc_dict['zajezdnia_dobrze'] = self.zajezdnia_dobrze
         self.skutecznosc_dict['zajezdnia_zle'] = self.zajezdnia_zle
         self.skutecznosc_dict['zajezdnia_skutecznosc'] = self.zajezdnia_skutecznosc
@@ -456,6 +494,9 @@ class Okno(QMainWindow):
         print(self.skutecznosc_dict)
 
     def skutecznosc_load(self):
+        '''
+	    Opis: Wczytujemy zapisana skutecznosc z pliku json aby wyswietlic je przy uruchamianiu GUI
+	    '''
         with open('skutecznosc.json', 'r') as fp:
             self.skutecznosc_dict = json.load(fp)
             self.zajezdnia_dobrze = self.skutecznosc_dict['zajezdnia_dobrze']
