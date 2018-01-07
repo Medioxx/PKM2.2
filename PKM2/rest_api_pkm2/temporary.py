@@ -5,8 +5,9 @@ import requests
 import threading
 from threading import Thread, Event, ThreadError
 
-
-
+####################################
+# KLASA TESTOWA SŁUŻĄCA JAKO POMOC #
+####################################
 url = 'http://192.168.2.1/?action=stream'
 
 
