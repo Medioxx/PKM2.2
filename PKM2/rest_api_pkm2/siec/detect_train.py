@@ -4,9 +4,22 @@ import os
 import cv2
 import sys
 
+"""
+Modul ten zawiera dwie sieci neuronowe. 
+Pierwsza z nich sluzy do rozpoznawnia trzech roznych pociagow zawierajace odpowiednie znaczniki.
+Druga natomiast sluzy do rozpoznawania okreslonych stacji PKM
+W celu uzyskania pliku do uczenia sieci i danych testowych, nalezy skontaktowac sie pod maila adbelniak@gmail.com
+"""
+
+
 def load_model():
+    """ Funkcja ta sluzy do zaladowania modeli sieci neurnowoych w kontekscie aplikacji webowej.
+    W celu zaladowania modelu w kontekscie tego modulu, nalezy zmienic sciezki do plikow .json i .h5
+    
+    :return: model obu sieci neuronowych
+    """
     model_path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\pociag.json'
-    weights_path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) +  '\\pociag.h5'
+    weights_path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\pociag.h5'
 
     json_file = open(model_path, 'r')
     loaded_model_json = json_file.read()
@@ -26,7 +39,9 @@ def load_model():
 
 
 def detect_train(img, model, station_model):
-    """
+    """Funkcja sluzy do detekcji pociagow i stacji kolejowych. 
+    Model jest dostarczany z zewnatrz tak by nie ladowac go ponownie i zaosczedzic na czasie.
+    
     output:
     0 - nothing
     1 - train blue square
@@ -38,8 +53,10 @@ def detect_train(img, model, station_model):
     1 - kielpinek
     2 - strzyza
     3 - zajezdnia
-     :param images:  array of images with single digit
-     :return:int, number from single cell from scans
+     :param img:  array pojedynczy obraz odczytany z kamery z pociagu
+      :param model:  array model sieci neuronowej do wykrywania pociagu
+    :param station_model:  array model sieci neuronowej do wykrywania stacji
+     :return:int, informacja na temat tego ktory obiekt zostal wykryty
      """
 
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -47,11 +64,12 @@ def detect_train(img, model, station_model):
     W, H, C = img.shape
     input_shape = ( 1, img_height, img_width, 3)
     pred_val = ''
+    # skalowanie obrazu do rozmiaru 128x96
     img = cv2.resize(img, (0, 0), fx=img_height/H, fy=img_width/W)
 
     image = img
     grey_x = image.astype('float32')
-    
+    # normalizacja danych wejsciowych
     grey_x = grey_x.reshape(input_shape) / 255
     pred_value = model.predict(grey_x, batch_size=1, verbose=0)
     pred_value_station = station_model.predict(grey_x, batch_size=1, verbose=0)
@@ -63,6 +81,7 @@ def detect_train(img, model, station_model):
 
 
 if __name__ == '__main__':
+
     model, station_model = load_model()
     # Capture frame-by-frame
 
@@ -75,6 +94,7 @@ if __name__ == '__main__':
     # Display the resulting frame
     print(detected)
     print(pred_station)
+    # Utworzenie nowego pliku txt i zapisanie do niego, outputow z sieci
     obj = open('output.txt', 'w')
     obj.write(str(detected) + '\n')
     obj.write(str(pred_station))
