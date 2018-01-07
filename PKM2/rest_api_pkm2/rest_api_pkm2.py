@@ -28,9 +28,13 @@ app = Flask(__name__)
 # 6.wykrzwanie twarzy            #
 # 7.wykrywanie banana            #
 ##################################
+
+# Klasa, która głównie służy do przechowywania listy "klucz: wartość" algorytmów,
+# gdzie klucz jest danym algorytmem, a wartość przybierawartość prawda lub fałsz
+# Algorytmy posiadające wartość prawda, są aktualnie włączone do przetwarzania
 class Algorithms:
     def __init__(self):
-        # face, bananas, tracks
+        # Słownik, przechowujący informacje o włączonych algorytmach
         self.algorithms = {"movement" : "False", "depot" : "False", "station" : "False", "obstacles": "False", "hand" : "False", "face" : "False", "train" : "False"}
         self.log_output_table = {'type': [u'movement', u'depot', u'station', u'obstacles', u'hand', u'face', u'train'],
                                  'launched': [u"False", u"False", u"False", u"False", u"False", u"False", u"False"]}
@@ -44,7 +48,8 @@ class Algorithms:
 
 
 
-
+    # Funkcja służąca do włączania/wyłączania algorytmów
+    # po otrzymaniu pliku w formacie JSON
     def set_algorithms(self, data):
         data = request.json
         self.algorithms["movement"] = data['movement']
@@ -71,12 +76,14 @@ class Algorithms:
         json_data = jsonify(alg.tracks)
         return json_data
 
-
+    # Funkcja służąca do wysyłania aktualnego słownika algorytmów
     def get_algorithms(self):
         json_data = jsonify(alg.algorithms)
         return json_data
 
-    #save dictionary to a txt file in html format
+    # Zapis tablicy algorytmów w formacie tabeli do pliku txt
+    # w formacie tabeli w języku HTML
+    # Obecnie nieużywana
     def dict_to_text_file(self):
        f = open('table.txt', 'w')
 
@@ -95,7 +102,8 @@ class Algorithms:
        f.write('</table>')
        f.close()
 
-    # format dictionary to make it easy to display on a html page
+    # Formatowanie słownika w taki sposób, aby w prosty sposób
+    # możnabyło go wyświetlić na stronie internetowej (RestApi, HTML)
     def get_log_zip_format_data(self):
 
         self.log_output_table['type'] = self.algorithms.keys()
@@ -104,12 +112,12 @@ class Algorithms:
         return log_data
 
     def get_tracks_zip_format_data(self):
-
         self.log_output_table['type'] = self.algorithms.keys()
         self.log_output_table['launched'] = self.algorithms.values()
         log_data = zip(self.log_output_table['type'], self.log_output_table['launched'])
         return log_data
 
+# Klasa służąca do sterowania pociągiem
 class SteerTrain():
 
     def __init__(self):
@@ -119,7 +127,7 @@ class SteerTrain():
 
 
 
-
+    # Ustawianie prędkości pociągu
     def set_velocity(self, data):
         data = request.json
         self.train_properties["velocity"] = data['velocity']
@@ -134,7 +142,7 @@ class SteerTrain():
             return "OK"
         except:
             return "NOK"
-
+# Klasa służąca do obsługi nagrań z folderu
 class Movie():
 
     def __init__(self):
@@ -146,8 +154,7 @@ class Movie():
         else:
             self.movie = self.movieDict[0]
 
-
-
+    # Zwraca dostępne liste dostępnych filmó
     def get_movies(self):
         self.movieDict = []
         for file in os.listdir(self.path):
@@ -155,6 +162,7 @@ class Movie():
                 self.movieDict.append(file)
         return self.movieDict
 
+    # Wybiera film
     def set_movie(self,movie):
         self.movie = movie
 
@@ -172,18 +180,32 @@ def nocache(view):
 
     return update_wrapper(no_cache, view)
 
+#############################################################################
+#                                                                           #
+# Wszystko co znajduje się poniżej służy do obsługi RestApi                 #
+# W '@app.route()' mamy podaną ścieżkę względną strony                      #
+# Przy 'return' zwracamy szablon HTML'owy strony internetowej,              #
+# w zależności od wybranej podstrony                                        #
+#############################################################################
 
+# Aby RestApi poprawnie działało wymagane jest połączenie z interneem do
+# pobrania JQuery, Bootstrapa, ikon
+# Oraz połączenie z Kamerą z pociągu do wyświetlania strumienia z kamery
+
+# Główna strona
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# Opis aplikacji
 @app.route('/about')
 def about():
     return render_template('about.html')
 
+# Wyświetla słownik algorytmów
 @app.route('/logs', methods = ['GET', 'POST'] )
 def logs():
-    #save logs as a html structure to a text file
+    #Zapisuje słownik do pliku txt
     alg.dict_to_text_file()
 
     log_data = alg.get_log_zip_format_data()
@@ -198,6 +220,7 @@ def update_movie():
         return redirect(url_for('recorded'))
     return "test"
 
+# Wyświetla, które tory są zajęte przez pociągi
 @app.route('/tracks', methods = ['GET', 'POST'] )
 def tracks():
     #save logs as a html structure to a text file
@@ -205,6 +228,8 @@ def tracks():
 
     return render_template('tracks.html',data=alg.tracks)
 
+# Przyjmuje informacje od algorytmu zajętości torów i wyświetla je na stronie
+# '/tracks'
 @app.route('/tracks/set_tracks', methods = ['POST'] )
 def logs_set_tracks():
     if not request.json:
@@ -217,12 +242,13 @@ def logs_set_tracks():
     output_data = alg.get_tracks()
     return output_data
 
+# Zwraca aktualny słownik algorytmów w formacie JSON
 @app.route('/logs/get_algorithms', methods = ['GET'] )
 def logs_get_algorithms():
     output_data = alg.get_algorithms()
     return output_data
 
-
+# Aktualizuje słownik algorytmów w RestApi
 @app.route('/logs/set_algorithms', methods = ['POST'] )
 def logs_set_algorithms():
     if not request.json:
@@ -237,20 +263,21 @@ def logs_set_algorithms():
 # Stream
 def gen(camera):
     while True:
-        ################################ choose your camera man #####################################
 
-        frame = camera.get_frame_aiball() # <-- ai-ball camera ()
-        #frame = camera.get_frame_webcam() # <-- personal computer camera
-        # Achtung!
+        # Wybranie Kamery i pobranie obrazu
+        frame = camera.get_frame_aiball()  # <-- ai-ball camera, kamera z pociągu
+        #frame = camera.get_frame_webcam() # <-- Kamera z komputera (do testów)
+
+        # Przetwarzanie obrazu wybranymi algorytmami
         frame = detection.detect_choosen_objects(frame, alg.algorithms)
 
-        # Convert frame to format in which is it able to be displayed on a RestApi
+        # Zmienia format obrazu, aby możnabyło go łatwo wyśietlić na stronie
         ret, jpeg = cv2.imencode('.jpg', frame)
         frame_out = jpeg.tobytes()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_out + b'\r\n\r\n')
 
-# Recorded
+# Nagranie
 def gen_recorded():
     path=movies.path + '\\' + movies.movie
     try:
@@ -259,13 +286,10 @@ def gen_recorded():
         print("NOT FOUND")
 
     while True:
-        ################################ choose your camera man #####################################
 
+        # Pobór obrazu z nagrania
         ret, frame = cap.read()
         if ret == True:
-
-            # Display the resulting frame
-            #cv2.imshow('Frame', frame)
 
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
@@ -274,11 +298,10 @@ def gen_recorded():
         # Break the loop
         else:
             break
-        # Achtung!
+        # Przetwarzanie obrazu
         frame = detection.detect_choosen_objects(frame, alg.algorithms)
 
-
-        # Convert frame to format in which is it able to be displayed on a RestApi
+        # Zmienia format obrazu, aby możnabyło go łatwo wyśietlić na stronie
         ret, jpeg = cv2.imencode('.jpg', frame)
         frame_out = jpeg.tobytes()
         if alg.neural == True:
@@ -291,17 +314,19 @@ def gen_recorded():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_out + b'\r\n\r\n')
 
+# Zwraca strumień z kamery
 @app.route('/get_stream')
 def get_stream():
     return Response(gen(Camera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+# Zwraca strumień z nagrania
 @app.route('/get_recorded')
 def get_recorded():
     return Response(gen_recorded(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
+# Wyświetlanie strumienia na stronie
 @app.route('/stream')
 def stream():
     return render_template('stream.html')
@@ -348,6 +373,7 @@ def neural_set_frame():
     alg.neural = True
     return "neural"
 
+#  Wyświetla nagrania na stronie
 @app.route('/recorded')
 def recorded():
     return render_template('recorded.html',movie = movies.movie)
@@ -369,4 +395,8 @@ if __name__ == "__main__":
     detection = Detection()
     steerTrain=SteerTrain()
     movies = Movie()
+    # RestApi jest domyślnie stawiane na localhoście
+    # na porcie 5000
+    # RestApi musi być wielowątkowe, aby działało poprawnie
+    # (Obsługa kilku klientów)
     app.run(host='0.0.0.0',port=5000, threaded=True)

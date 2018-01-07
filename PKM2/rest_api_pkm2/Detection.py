@@ -8,13 +8,13 @@ from marker_detector import ShapeDetector
 # 4.wykrywanie przeszkod         #
 # 5.wykrywanie reki              #
 # 6.wykrzwanie twarzy            #
-# 7.wykrywanie banana            #
+# 7.wykrywanie pociągu            #
 ##################################
 #self.algorithms = {"movement" : "False", "depot" : "False", "station" : "False",
 # "obstacles": "False", "hand" : "False", "face" : "False", "banana" : "False"}
 
 class Detection(object):
-    # HERE WE ARE MAKING INITIALIZATION OF ALL NECESSARY THINGS (for detection algorithms ofc ;))
+    # Inicjalizacja algorytmów oraz niezbędnych do działania ich zmiennych
     def __init__(self):
         ################### wykrywanie reki ###################
         self.zatrzask = 0
@@ -53,6 +53,9 @@ class Detection(object):
 
         return track_window, term_crit, roi_hist
 
+    # Najważniejsza funkcja służąca do przetwarzania obrazu
+    # Na podstawie otrzymanego słownika 'choosenAlgorithms'
+    # przetwarza otrzymaną ramkę (obraz) 'frame'
     def detect_choosen_objects(self,frame,choosenAlgrithms):
         shape_detector = ShapeDetector(frame)
 
@@ -84,6 +87,7 @@ class Detection(object):
 
         return frame
 
+    ############################### Ruch pociągu ####################################
     def ruchomy(self, frame,licznik,fgbg):
 
         """"
@@ -118,7 +122,7 @@ class Detection(object):
 
         return licznik
 
-    ############################## FACE ######################################
+    ############################## Twarz ######################################
     def detect_face(self, frame):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # faces to lista punktow i rozmiary (x, y, w, h)
@@ -136,7 +140,7 @@ class Detection(object):
 
         return frame
 
-    ############################### HAND ####################################
+    ############################### Ręka ####################################
     def detect_hand(self, frame, track_window, term_crit, roi_hist):
         """Funkcja sledzaca dlon na wideo
 
@@ -166,6 +170,7 @@ class Detection(object):
 
         return frame, track_window, term_crit, roi_hist
 
+    ############################### Przeszkody ####################################
     def przeszkody(self,frame,counter_proste,counter_widac_tory):
         # wycinamy fragment, na ktorym widac tory
         subframe = frame[200:400, 150:350]
