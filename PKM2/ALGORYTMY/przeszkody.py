@@ -3,6 +3,11 @@ import numpy as np
 
 
 def przeszkody(frame,counter_proste,counter_widac_tory):
+    '''
+    Opis: Wykrywa przeszkody na obrazie
+    Zmienne wejściowe: obraz z kamery, licznik zwiększany w momencie wykrycia prostych, licznik zwiększany w momencie wykrycia torów
+    Zmienne wyjsciowe: licznik zwiększany w momencie wykrycia prostych, licznik zwiększany w momencie wykrycia torów
+    '''
     # wycinamy fragment, na ktorym widac tory
     subframe = frame[300:500, 150:350]
 
