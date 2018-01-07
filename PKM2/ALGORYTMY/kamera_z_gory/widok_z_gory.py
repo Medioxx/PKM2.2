@@ -15,6 +15,11 @@ url_get = 'http://127.0.0.1:5000/tracks/get_tracks'
 url_set = 'http://127.0.0.1:5000/tracks/set_tracks'
 
 def save_to_json(data,path):
+    '''
+    Opis: Zapisuje dane do pliku json
+    Zmienne wejściowe: dane do zapisu, lokalizacja zapisywanego pliku
+    Zmienne wyjsciowe: True w przypadku poprawnego zapisu
+    '''
     try:
         with open(path + "/top_camera.json", "w") as top_camera_file:
             top_camera_file.write(json.dumps(data))
@@ -26,6 +31,11 @@ def save_to_json(data,path):
 
 
 def group_lines(lines):
+    '''
+    Opis: Grupuje wykryte linie w zaleznosci od ich wspolrzednej x
+    Zmienne wejściowe: wykryte linie w obrazie
+    Zmienne wyjsciowe: wektor zawierajacy pogrupowane linie
+    '''
     for line in lines:
         x = line[0][0]/12.80
         grouped[int(x)] += 1
@@ -33,6 +43,11 @@ def group_lines(lines):
 
 
 def find_rails(lines):
+    '''
+    Opis: Funcja znajdująca tory na obrazie
+    Zmienne wejściowe: wykryte linie w obrazie
+    Zmienne wyjsciowe: wektor zawierający wykryte tory
+    '''
     #wyszukiwanie wiekszych skupisk linii, czyli potencjalnych torow
     max, _ = peakdet(group_lines(lines), delta)
     max = list(max)
@@ -60,6 +75,11 @@ def find_rails(lines):
 
 
 def find_trains(lines, clusters):
+    '''
+    Opis: Funcja znajdująca pociągi na obrazie
+    Zmienne wejściowe: wykryte linie w obrazie, wykryte tory
+    Zmienne wyjsciowe: wywołanie funckji save_to_json()
+    '''
     #szukamy torow
     peaks, _ = peakdet(group_lines(lines), delta/2)
 
@@ -88,7 +108,11 @@ def find_trains(lines, clusters):
     return save_to_json(trains_on_rails,file_path)
 
 def zajetosc_torow(counter, clusters):
-
+    '''
+    Opis: Sprawdzam które tory są zajęte
+    Zmienne wejściowe: licznik wywołań funkcji, wykryte tory
+    Zmienne wyjsciowe: licznik wywołań funkcji, wykryte tory
+    '''
     # wykrywanie lini
     edges = cv2.Canny(frame, 50, 250, apertureSize=3)
     minLineLength = 50
