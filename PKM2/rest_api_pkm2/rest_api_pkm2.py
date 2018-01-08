@@ -146,7 +146,7 @@ class SteerTrain():
 class Movie():
 
     def __init__(self):
-        self.path = path=os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\FILMY'
+        self.path = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir)) + '\\FILMY'
         self.movieDict = []
         self.get_movies()
         if len(self.movieDict)==0:
