@@ -7,7 +7,7 @@ Wersja kliencka pozwaląjąca kontrolować cały system została zaimplementowan
 
 ## Konfiguracja Python
 * Ściągnij aktualną wersję projektu z [GitHub](https://github.com/Medioxx/PKM2.2)
-* Zainstaluj Anaconde [Anaconda](https://docs.anaconda.com/anaconda/install/windows)
+* Zainstaluj Anaconde [Anaconda](https://docs.anaconda.com/anaconda/install/windows). W tym projekcie używany jest Python 3.6
 * Skonfiguruj ścieżkę systemową,aby ta wersja Pythona oraz Pip była używana w przypadku odpalania projektu z konsoli
 * Przejdź do folderu, w którym znajduje się repozytorium 
 * Włącz konsolę, a następnie ``pip install -r requirements.txt``
