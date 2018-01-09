@@ -4,9 +4,10 @@ package pl.eti.pg.pkm.finalapp;
  * Created by EO NETWORKS on 03.12.2017.
  */
 
+//klasa przechowująca informację o nazwie algorytmu oraz informację na temat wybrania algorytmu
 public class Algorithm {
     String name = null;
-    boolean selected = false;
+    Boolean selected = false;
 
     public Algorithm(String name, Boolean selected) {
         this.name = name;
@@ -21,11 +22,11 @@ public class Algorithm {
         this.name = name;
     }
 
-    public boolean isSelected() {
+    public Boolean getSelected() {
         return selected;
     }
 
-    public void setSelected(boolean selected) {
+    public void setSelected(Boolean selected) {
         this.selected = selected;
     }
 }
