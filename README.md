@@ -56,3 +56,6 @@ Pozwala ona na sterowanie pociągiem(Nr.5) podpiętym do kamery. Wyborem algoryt
 ## GUI 
 
 Aplikacja deskoptowa umożliwia dokładnie to samo co aplikacja na Androida,z tym rozszerzeniem,że możliwe jest również oglądanie filmów. Należy pamiętąć,aby wpisać odpowiedni adres IP do pól tesktowych odpowiadającym filmowy lub streamowi.
+
+
+W razie problemów z konfiguracją lub ewentualne pytania na temat kodu proszę kierować na maila ``marek1cz@gmail.com``
